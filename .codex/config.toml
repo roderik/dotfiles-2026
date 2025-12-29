@@ -1,0 +1,47 @@
+notify = ["/Users/roderik/.codex/notify.sh"]
+model = "gpt-5.2-codex"
+model_reasoning_effort = "xhigh"
+profile = "yolo"
+
+[projects."/Users/roderik/Development/dalp"]
+trust_level = "trusted"
+
+[profiles.balanced]
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "concise"
+
+[profiles.balanced.features]
+web_search_request = true
+
+[profiles.balanced.sandbox_workspace_write]
+network_access = true
+
+[profiles.safe]
+approval_policy = "on-failure"
+sandbox_mode = "read-only"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "concise"
+
+[profiles.safe.features]
+web_search_request = false
+
+[profiles.yolo]
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "xhigh"
+model_reasoning_summary = "detailed"
+
+[profiles.yolo.features]
+web_search_request = true
+
+[tui]
+notifications = true
+
+[features]
+unified_exec = true
+shell_snapshot = true
