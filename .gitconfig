@@ -4,6 +4,7 @@
 	signingkey = key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA0+bsCoH2OJejgy1f89x6ngW7/sqYWqM949diNIo449 SSH key (roderik)
 [core]
 	pager = delta
+	multiPackIndex = true
 [interactive]
 	diffFilter = delta --color-only
 [delta]
@@ -14,7 +15,8 @@
 	conflictstyle = diff3
 [diff]
   renames = copies
-	colorMoved = default
+	colorMoved = plain
+	algorithm = histogram
 [commit]
 	gpgsign = true
 [gpg "ssh"]
@@ -29,10 +31,26 @@
 [apply]
   whitespace = fix
 [branch]
-  sort = -committerdate
+	sort = -committerdate
   autosetuprebase = always
 [push]
   default = simple
   followTags = true
+	autoSetupRemote = true
 [init]
   defaultBranch = main
+[fetch]
+	prune = true
+	pruneTags = true
+	writeCommitGraph = true
+[column]
+	ui = auto
+[tag]
+	sort = version:refname
+[index]
+	sparse = true
+[phantom]
+	editor = code --reuse-window
+	ai = claude
+[gitbutler]
+	aiModelProvider = openai
