@@ -1,0 +1,165 @@
+# Atuin Config - Optimized for Developer Workflow
+# https://docs.atuin.sh/configuration/config/
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SEARCH BEHAVIOR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Fuzzy search - type any part of command to find it
+search_mode = "fuzzy"
+
+# When pressing up arrow, search within current directory first (great for projects)
+filter_mode = "global"
+filter_mode_shell_up_key_binding = "directory"
+search_mode_shell_up_key_binding = "fuzzy"
+
+# Enable workspace mode - filter by git repo when in one
+workspaces = true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# UI SETTINGS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Compact style with inverted layout (search bar at top like modern apps)
+style = "compact"
+invert = true
+
+# Show preview of long commands
+show_preview = true
+max_preview_height = 4
+
+# Inline height - 40 is a nice middle ground (0 = full screen)
+inline_height = 40
+
+# Show help row with version and keymap hints
+show_help = true
+show_tabs = true
+
+# When pressing escape, return to original command (not the search query)
+exit_mode = "return-original"
+
+# Enter executes immediately, Tab lets you edit first
+enter_accept = true
+
+# Enable command chaining - complete after && || |
+command_chaining = true
+
+# Emacs-style word navigation
+word_jump_mode = "emacs"
+
+# Show the shortcut numbers (1-9) for quick selection
+show_numeric_shortcuts = true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HISTORY FORMAT & DISPLAY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Nice history format with time and duration
+history_format = "{time} | {duration} | {command}"
+
+# Use local timezone
+timezone = "local"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SECURITY & FILTERING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Filter out secrets automatically (AWS keys, tokens, etc.)
+secrets_filter = true
+
+# Don't save these patterns to history
+history_filter = [
+  "^export .*TOKEN",
+  "^export .*SECRET",
+  "^export .*KEY",
+  "^export .*PASSWORD",
+  "^export .*PASS=",
+  ".*api[_-]?key.*=",
+  ".*password.*=",
+  ".*secret.*=",
+  "curl.*-H.*Authorization",
+  "curl.*-u ",
+]
+
+# Don't record history in sensitive directories
+cwd_filter = [
+  ".*/\\.ssh$",
+  ".*/\\.gnupg$",
+  ".*/\\.password-store$",
+]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SYNC SETTINGS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+auto_sync = true
+sync_frequency = "5m"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# STATS - Track subcommands for better statistics
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[stats]
+common_subcommands = [
+  "apt",
+  "brew",
+  "bun",
+  "cargo",
+  "claude",
+  "docker",
+  "git",
+  "go",
+  "helm",
+  "jj",
+  "kubectl",
+  "mise",
+  "nix",
+  "npm",
+  "pnpm",
+  "podman",
+  "systemctl",
+  "terraform",
+  "turbo",
+  "yarn",
+]
+
+common_prefix = ["sudo", "time", "nocorrect"]
+ignored_commands = ["cd", "ls", "ll", "la", "z", "pwd", "clear", "exit"]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# KEYBINDINGS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+keymap_mode = "auto"
+
+[keymap_cursor]
+emacs = "blink-bar"
+vim_insert = "blink-bar"
+vim_normal = "steady-block"
+
+[keys]
+scroll_exits = true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SEARCH FILTERS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[search]
+filters = ["directory", "workspace", "host", "session", "global"]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PREVIEW & SYNC
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[preview]
+strategy = "auto"
+
+[sync]
+records = true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# THEME
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[theme]
+name = "autumn"
