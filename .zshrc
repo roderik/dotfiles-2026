@@ -42,6 +42,19 @@ if [[ ! -f "$ZOXIDE_CACHE" || "/opt/homebrew/bin/zoxide" -nt "$ZOXIDE_CACHE" ]];
   zoxide init zsh > "$ZOXIDE_CACHE"
 fi
 source "$ZOXIDE_CACHE"
+alias cd='z'
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Atuin (cached) - must be after fzf to override Ctrl+R
+# ──────────────────────────────────────────────────────────────────────────────
+ATUIN_CACHE="$ZSH_CACHE_DIR/atuin.zsh"
+if [[ ! -f "$ATUIN_CACHE" || "/opt/homebrew/bin/atuin" -nt "$ATUIN_CACHE" ]]; then
+  atuin init zsh --disable-up-arrow > "$ATUIN_CACHE"
+fi
+source "$ATUIN_CACHE"
+# Bind up arrow to full atuin search (like Ctrl-R)
+bindkey '^[[A' atuin-search
+bindkey '^[OA' atuin-search
 
 export HOMEBREW_NO_ENV_HINTS=1
 export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
