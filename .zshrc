@@ -42,7 +42,6 @@ if [[ ! -f "$ZOXIDE_CACHE" || "/opt/homebrew/bin/zoxide" -nt "$ZOXIDE_CACHE" ]];
   zoxide init zsh > "$ZOXIDE_CACHE"
 fi
 source "$ZOXIDE_CACHE"
-alias cd='z'
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Atuin (cached) - must be after fzf to override Ctrl+R
