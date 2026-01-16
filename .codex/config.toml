@@ -45,3 +45,6 @@ notifications = true
 [features]
 unified_exec = true
 shell_snapshot = true
+
+[notice]
+hide_rate_limit_model_nudge = true
