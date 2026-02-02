@@ -5,6 +5,7 @@
 [core]
 	pager = delta
 	multiPackIndex = true
+	excludesfile = ~/.gitignore_global
 [interactive]
 	diffFilter = delta --color-only
 [delta]
@@ -54,3 +55,5 @@
 	ai = claude
 [gitbutler]
 	aiModelProvider = openai
+[coderabbit]
+	machineId = cli/dbdba1f8d387485b9bfbc4df65f29eaa

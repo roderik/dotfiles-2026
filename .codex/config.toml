@@ -2,45 +2,406 @@ notify = ["/Users/roderik/.codex/notify.sh"]
 model = "gpt-5.2-codex"
 model_reasoning_effort = "xhigh"
 profile = "yolo"
+file_opener = "cursor"
+cli_auth_credentials_store = "auto"
+mcp_oauth_credentials_store = "auto"
 
 [projects."/Users/roderik/Development/dalp"]
 trust_level = "trusted"
-
 [profiles.balanced]
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 model = "gpt-5.2-codex"
 model_reasoning_effort = "medium"
-model_reasoning_summary = "concise"
+model_reasoning_summary = "detailed"
+web_search = "live"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 [profiles.balanced.features]
 web_search_request = true
+shell_tool = true
+shell_snapshot = true
+collab = true
+steer = true
+collaboration_modes = true
+child_agents_md = true
 
 [profiles.balanced.sandbox_workspace_write]
 network_access = true
-
 [profiles.safe]
 approval_policy = "on-failure"
 sandbox_mode = "read-only"
 model = "gpt-5.2-codex"
 model_reasoning_effort = "medium"
-model_reasoning_summary = "concise"
+model_reasoning_summary = "detailed"
+web_search = "live"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 [profiles.safe.features]
 web_search_request = false
-
+shell_tool = true
+shell_snapshot = true
+collab = true
+steer = true
+collaboration_modes = true
+child_agents_md = true
 [profiles.yolo]
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 model = "gpt-5.2-codex"
 model_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
+web_search = "live"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 [profiles.yolo.features]
 web_search_request = true
+shell_tool = true
+shell_snapshot = true
+collab = true
+steer = true
+collaboration_modes = true
+child_agents_md = true
 
 [tui]
 notifications = true
+alternate_screen = "auto"
 
 [features]
 unified_exec = true
@@ -48,3 +409,113 @@ shell_snapshot = true
 
 [notice]
 hide_rate_limit_model_nudge = true
+
+
+
+
+
+
+
+
+
+[profiles.safe.sandbox_workspace_write]
+network_access = true
+
+[profiles.yolo.sandbox_workspace_write]
+network_access = true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[mcp_servers.codex]
+command = "codex"
+args = ["-m","gpt-5.2-codex","-c","model_reasoning_effort=xhigh","mcp-server"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp/oauth"
+
+[mcp_servers.exa]
+url = "https://mcp.exa.ai/mcp?tools=web_search_exa,web_search_advanced_exa,get_code_context_exa,deep_search_exa,crawling_exa,company_research_exa,linkedin_search_exa,deep_researcher_start,deep_researcher_check"
+
+[mcp_servers.linear]
+url = "https://mcp.linear.app/mcp"
+
+[mcp_servers.octocode]
+command = "npx"
+args = ["-y","octocode-mcp@latest"]
+
+[mcp_servers.restate-docs]
+url = "https://docs.restate.dev/mcp"
+
+[mcp_servers.shadcn]
+command = "npx"
+args = ["shadcn@latest","mcp"]
+
+[mcp_servers.tanstack]
+command = "npx"
+args = ["@tanstack/cli","mcp"]
+

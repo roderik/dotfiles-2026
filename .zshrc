@@ -81,6 +81,7 @@ alias ps='procs'
 # Claude Code
 alias claude='claude --dangerously-skip-permissions --chrome'
 alias c='claude'
+alias wtc='git fetch origin main && wt switch --create --base origin/main --execute=claude'
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Tool completions (cached to fpath)
@@ -113,3 +114,8 @@ _set_terminal_title() {
   print -Pn "\e]0;${title}\a"
 }
 add-zsh-hook precmd _set_terminal_title
+
+# bun completions
+[ -s "/Users/roderik/.bun/_bun" ] && source "/Users/roderik/.bun/_bun"
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
