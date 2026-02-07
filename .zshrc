@@ -78,10 +78,69 @@ alias cat='bat --paging=never'
 # ──────────────────────────────────────────────────────────────────────────────
 alias ps='procs'
 
-# Claude Code
-alias claude='claude --dangerously-skip-permissions --chrome'
-alias c='claude'
+# ──────────────────────────────────────────────────────────────────────────────
+# Tmux aliases
+# ──────────────────────────────────────────────────────────────────────────────
+alias t='tmux'
+alias tn='tmux new-session -s'          # tn myproject
+alias ta='tmux attach-session -t'       # ta myproject
+alias tl='tmux list-sessions'
+alias tk='tmux kill-session -t'         # tk myproject
+alias tka='tmux kill-server'            # kill all sessions
+alias td='tmux detach'
+alias tw='tmux list-windows'
+alias tp='tmux list-panes'
+alias ts='tmux switch-client -t'        # ts myproject (switch from inside tmux)
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Claude Code (auto-launches in tmux)
+# ──────────────────────────────────────────────────────────────────────────────
+_claude_in_tmux() {
+  local claude_cmd="command claude --dangerously-skip-permissions --chrome $*"
+  if [[ -n "$TMUX" ]]; then
+    eval "$claude_cmd"
+  else
+    local session_name="claude-${PWD:t:gs/\./-}"
+    tmux new-session -s "$session_name" "$claude_cmd"
+  fi
+}
+alias claude='_claude_in_tmux'
+alias c='_claude_in_tmux'
 alias wtc='git fetch origin main && wt switch --create --base origin/main --execute=claude'
+
+# Remove current worktree and return to main
+wtr() {
+  local current_branch
+  current_branch=$(git branch --show-current 2>/dev/null)
+
+  if [[ -z "$current_branch" ]]; then
+    echo "Error: not in a git repository"
+    return 1
+  fi
+
+  local main_worktree
+  main_worktree=$(git worktree list --porcelain | head -1 | sed 's/^worktree //')
+
+  if [[ "$PWD" == "$main_worktree" || "$PWD" == "$main_worktree"/* ]]; then
+    echo "Error: already in the main worktree — nothing to remove"
+    return 1
+  fi
+
+  echo "Removing worktree: $current_branch"
+  cd "$main_worktree" || return 1
+  wt remove --yes --foreground "$current_branch"
+  echo "Back in main worktree: $main_worktree"
+}
+
+# Switch to a PR worktree: wtg 123 or wtg #123
+wtg() {
+  local pr="${1#\#}"
+  if [[ -z "$pr" ]]; then
+    echo "Usage: wtg <number>"
+    return 1
+  fi
+  git fetch origin main && wt switch "pr:$pr"
+}
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Tool completions (cached to fpath)
@@ -117,5 +176,44 @@ add-zsh-hook precmd _set_terminal_title
 
 # bun completions
 [ -s "/Users/roderik/.bun/_bun" ] && source "/Users/roderik/.bun/_bun"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Worktrunk - worktree cleanup helper
+# ──────────────────────────────────────────────────────────────────────────────
+wt-cleanup() {
+  local -a to_remove=()
+
+  echo "Scanning worktrees for merged/closed PRs..."
+  echo
+
+  # Strip statusline/symbols (contain ANSI control chars) then extract candidate branches
+  while IFS=$'\t' read -r branch is_main is_current detached; do
+    [[ "$is_main" == "true" ]] && continue
+    [[ "$is_current" == "true" ]] && continue
+    [[ "$detached" == "true" ]] && continue
+    [[ -z "$branch" || "$branch" == "null" || ! "$branch" =~ ^[a-zA-Z0-9] ]] && continue
+
+    local pr_state
+    pr_state=$(gh pr view "$branch" --json state 2>/dev/null | jq -r '.state // empty')
+
+    case "$pr_state" in
+      MERGED)  echo "  ✓ $branch (merged) — will remove";  to_remove+=("$branch") ;;
+      CLOSED)  echo "  ✓ $branch (closed) — will remove";  to_remove+=("$branch") ;;
+      OPEN)    echo "  → $branch (open) — skipping" ;;
+      *)       echo "  ? $branch (no PR) — skipping" ;;
+    esac
+  done < <(wt list --format=json | jq -r '.[] | del(.statusline, .symbols) | [.branch // "", (.is_main | tostring), (.is_current | tostring), (.worktree.detached | tostring)] | @tsv')
+
+  echo
+
+  if [[ ${#to_remove[@]} -eq 0 ]]; then
+    echo "Nothing to clean up."
+    return 0
+  fi
+
+  echo "Removing ${#to_remove[@]} worktree(s)..."
+  wt remove --yes --foreground "${to_remove[@]}"
+  echo "Done."
+}
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
