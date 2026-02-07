@@ -31,6 +31,7 @@ model = "gpt-5.3-codex"
 model_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
 web_search = "live"
+personality = "pragmatic"
 
 [profiles.balanced.sandbox_workspace_write]
 network_access = true
