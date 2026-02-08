@@ -93,11 +93,19 @@ alias tp='tmux list-panes'
 alias ts='tmux switch-client -t'        # ts myproject (switch from inside tmux)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Claude Code
+# Claude Code (wrapped in tmux - invisible, auto-dying session)
 # ──────────────────────────────────────────────────────────────────────────────
-# Keep `claude` as an alias, but do not wrap it in tmux.
-# `command` bypasses aliases/functions, so this won't recurse.
-alias claude='command claude --dangerously-skip-permissions'
+claude() {
+  local dir_name="${PWD:t}"
+  local session_name="${dir_name//./-}"
+  if [[ -n "$TMUX" ]]; then
+    command claude --dangerously-skip-permissions "$@"
+  elif tmux has-session -t "$session_name" 2>/dev/null; then
+    tmux attach-session -t "$session_name"
+  else
+    tmux new-session -s "$session_name" "command claude --dangerously-skip-permissions $*"
+  fi
+}
 alias c='claude'
 alias wtc='git fetch origin main && wt switch --create --base origin/main --execute=claude'
 
