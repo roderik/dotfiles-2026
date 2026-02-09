@@ -30,7 +30,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # ──────────────────────────────────────────────────────────────────────────────
 FNM_CACHE="$ZSH_CACHE_DIR/fnm.zsh"
 if [[ ! -f "$FNM_CACHE" || "/opt/homebrew/bin/fnm" -nt "$FNM_CACHE" ]]; then
-  fnm env --shell zsh --use-on-cd > "$FNM_CACHE"
+  fnm env --shell zsh --use-on-cd >| "$FNM_CACHE"
 fi
 source "$FNM_CACHE"
 
@@ -39,7 +39,7 @@ source "$FNM_CACHE"
 # ──────────────────────────────────────────────────────────────────────────────
 ZOXIDE_CACHE="$ZSH_CACHE_DIR/zoxide.zsh"
 if [[ ! -f "$ZOXIDE_CACHE" || "/opt/homebrew/bin/zoxide" -nt "$ZOXIDE_CACHE" ]]; then
-  zoxide init zsh > "$ZOXIDE_CACHE"
+  zoxide init zsh >| "$ZOXIDE_CACHE"
 fi
 source "$ZOXIDE_CACHE"
 
@@ -48,7 +48,7 @@ source "$ZOXIDE_CACHE"
 # ──────────────────────────────────────────────────────────────────────────────
 ATUIN_CACHE="$ZSH_CACHE_DIR/atuin.zsh"
 if [[ ! -f "$ATUIN_CACHE" || "/opt/homebrew/bin/atuin" -nt "$ATUIN_CACHE" ]]; then
-  atuin init zsh --disable-up-arrow > "$ATUIN_CACHE"
+  atuin init zsh --disable-up-arrow >| "$ATUIN_CACHE"
 fi
 source "$ATUIN_CACHE"
 # Bind up arrow to full atuin search (like Ctrl-R)
@@ -99,20 +99,156 @@ alias tp='tmux list-panes'
 alias ts='tmux switch-client -t'        # ts myproject (switch from inside tmux)
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Tmux / Ghostty mouse behavior
+# ──────────────────────────────────────────────────────────────────────────────
+_tmux_disable_right_click_menu() {
+  # tmux 3.4+ enables a right-click display-menu by default when mouse is on.
+  # Source ~/.tmux.conf into any running server so Ghostty keeps its right-click menu.
+  command -v tmux >/dev/null 2>&1 || return 0
+
+  # Only touch an already-running server; don't start one just to apply options.
+  tmux list-sessions >/dev/null 2>&1 || return 0
+
+  tmux source-file "$HOME/.tmux.conf" >/dev/null 2>&1 || true
+}
+
+_ai_session_base() {
+  local root
+  root=$(git rev-parse --show-toplevel 2>/dev/null) || root="$PWD"
+  local name="${root:t}"
+  print -r -- "${name//./-}"
+}
+
+_ai_unique_session_name() {
+  local prefix="$1"
+  if [[ -z "$prefix" ]]; then
+    echo "Error: missing session prefix" >&2
+    return 1
+  fi
+
+  local ts
+  ts="$(date +%Y%m%d-%H%M%S)"
+  local name="${prefix}-${ts}"
+  local n=1
+  while tmux has-session -t "$name" 2>/dev/null; do
+    n=$((n + 1))
+    name="${prefix}-${ts}-${n}"
+  done
+  print -r -- "$name"
+}
+
+# Keep Ghostty right click working even if another tool started tmux with mouse enabled.
+_tmux_disable_right_click_menu
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Claude Code (wrapped in tmux - invisible, auto-dying session)
 # ──────────────────────────────────────────────────────────────────────────────
 claude() {
-  local dir_name="${PWD:t}"
-  local session_name="${dir_name//./-}"
   if [[ -n "$TMUX" ]]; then
     command claude --dangerously-skip-permissions "$@"
-  elif tmux has-session -t "$session_name" 2>/dev/null; then
+    return
+  fi
+
+  _tmux_disable_right_click_menu
+
+  local session_name
+  session_name="$(_ai_session_base)"
+
+  if tmux has-session -t "$session_name" 2>/dev/null; then
     tmux attach-session -t "$session_name"
   else
-    tmux new-session -s "$session_name" "command claude --dangerously-skip-permissions $*"
+    local claude_bin
+    claude_bin="$(whence -p claude 2>/dev/null)"
+    if [[ -z "$claude_bin" ]]; then
+      echo "Error: claude CLI not found on PATH" >&2
+      return 127
+    fi
+
+    tmux new-session -s "$session_name" -c "$PWD" "$claude_bin" --dangerously-skip-permissions "$@"
   fi
 }
 alias c='claude'
+
+claude-new() {
+  if [[ -n "$TMUX" ]]; then
+    command claude --dangerously-skip-permissions "$@"
+    return
+  fi
+
+  _tmux_disable_right_click_menu
+
+  local session_base
+  session_base="$(_ai_session_base)"
+
+  local session_name
+  session_name="$(_ai_unique_session_name "$session_base")" || return 1
+
+  local claude_bin
+  claude_bin="$(whence -p claude 2>/dev/null)"
+  if [[ -z "$claude_bin" ]]; then
+    echo "Error: claude CLI not found on PATH" >&2
+    return 127
+  fi
+
+  tmux new-session -s "$session_name" -c "$PWD" "$claude_bin" --dangerously-skip-permissions "$@"
+}
+alias cn='claude-new'
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Codex (wrapped in tmux - invisible, auto-dying session)
+# ──────────────────────────────────────────────────────────────────────────────
+codex() {
+  if [[ -n "$TMUX" ]]; then
+    command codex "$@"
+    return
+  fi
+
+  _tmux_disable_right_click_menu
+
+  local session_base
+  session_base="$(_ai_session_base)"
+  local session_name="${session_base}-codex"
+
+  if tmux has-session -t "$session_name" 2>/dev/null; then
+    tmux attach-session -t "$session_name"
+  else
+    local codex_bin
+    codex_bin="$(whence -p codex 2>/dev/null)"
+    if [[ -z "$codex_bin" ]]; then
+      echo "Error: codex CLI not found on PATH" >&2
+      return 127
+    fi
+
+    tmux new-session -s "$session_name" -c "$PWD" "$codex_bin" "$@"
+  fi
+}
+alias x='codex'
+
+codex-new() {
+  if [[ -n "$TMUX" ]]; then
+    command codex "$@"
+    return
+  fi
+
+  _tmux_disable_right_click_menu
+
+  local session_base
+  session_base="$(_ai_session_base)"
+
+  local session_name
+  session_name="$(_ai_unique_session_name "${session_base}-codex")" || return 1
+
+  local codex_bin
+  codex_bin="$(whence -p codex 2>/dev/null)"
+  if [[ -z "$codex_bin" ]]; then
+    echo "Error: codex CLI not found on PATH" >&2
+    return 127
+  fi
+
+  tmux new-session -s "$session_name" -c "$PWD" "$codex_bin" "$@"
+}
+alias xn='codex-new'
+
 alias wtc='git fetch origin main && wt switch --create --base origin/main --execute=claude'
 
 # Remove current worktree and return to main
