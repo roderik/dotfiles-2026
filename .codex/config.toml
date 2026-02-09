@@ -1,12 +1,14 @@
-# ~/.codex/config.toml — managed by codex-1up (patch mode)
 notify = ["/Users/roderik/.codex/notify.sh"]
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
 profile = "yolo"
-file_opener = "cursor"
+file_opener = "none"
 cli_auth_credentials_store = "auto"
 mcp_oauth_credentials_store = "auto"
 suppress_unstable_features_warning = true
-model = "gpt-5.2"
-model_reasoning_effort = "high"
+
+[projects."/Users/roderik"]
+trust_level = "trusted"
 
 [profiles.balanced]
 approval_policy = "on-request"
@@ -31,7 +33,6 @@ model = "gpt-5.3-codex"
 model_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
 web_search = "live"
-personality = "pragmatic"
 
 [profiles.balanced.sandbox_workspace_write]
 network_access = true
@@ -44,10 +45,6 @@ network_access = true
 
 [tui]
 alternate_screen = "auto"
-
-[mcp_servers.playwright]
-args = ["@playwright/mcp@latest"]
-command = "npx"
 
 [profiles.balanced.features]
 unified_exec = true
@@ -72,3 +69,8 @@ apps = true
 steer = true
 personality = true
 collaboration_modes = true
+
+[skills]
+[[skills.config]]
+enabled = true
+path = "/Users/roderik/.codex/skills/frontend-design/SKILL.md"
