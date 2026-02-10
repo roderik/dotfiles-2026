@@ -360,3 +360,11 @@ wt-cleanup() {
 }
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Zellij - auto-attach to existing session or create one
+# ──────────────────────────────────────────────────────────────────────────────
+export ZELLIJ_AUTO_ATTACH=true
+export ZELLIJ_AUTO_EXIT=true
+zellij delete-all-sessions -y 2>/dev/null
+eval "$(zellij setup --generate-auto-start zsh)"

@@ -1,0 +1,77 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zjstatus" {
+                // Catppuccin Mocha palette
+                color_crust    "#11111b"
+                color_mantle   "#181825"
+                color_surface0 "#313244"
+                color_surface1 "#45475a"
+                color_text     "#cdd6f4"
+                color_blue     "#89b4fa"
+                color_green    "#a6e3a1"
+                color_yellow   "#f9e2af"
+                color_peach    "#fab387"
+                color_mauve    "#cba6f7"
+                color_red      "#f38ba8"
+                color_pink     "#f5c2e7"
+
+                format_left  "{mode}#[bg=$mantle] {tabs}"
+                format_right "#[fg=$yellow,bg=$mantle]#[fg=$crust,bg=$yellow,bold] 󰻠 {command_cpu}#[fg=$green,bg=$yellow]#[fg=$crust,bg=$green,bold] 󰍛 {command_mem}#[fg=$mauve,bg=$green]#[fg=$crust,bg=$mauve,bold] 󰊢 {command_git}#[fg=$blue,bg=$mauve]#[fg=$crust,bg=$blue,bold]  {datetime}"
+                format_space "#[bg=$mantle]"
+
+                mode_normal       "#[bg=$blue,fg=$crust,bold] NORMAL #[fg=$blue,bg=$mantle]"
+                mode_locked       "#[bg=$green,fg=$crust,bold] LOCKED #[fg=$green,bg=$mantle]"
+                mode_resize       "#[bg=$yellow,fg=$crust,bold] RESIZE #[fg=$yellow,bg=$mantle]"
+                mode_move         "#[bg=$yellow,fg=$crust,bold] MOVE #[fg=$yellow,bg=$mantle]"
+                mode_pane         "#[bg=$mauve,fg=$crust,bold] PANE #[fg=$mauve,bg=$mantle]"
+                mode_tab          "#[bg=$peach,fg=$crust,bold] TAB #[fg=$peach,bg=$mantle]"
+                mode_scroll       "#[bg=$red,fg=$crust,bold] SCROLL #[fg=$red,bg=$mantle]"
+                mode_search       "#[bg=$red,fg=$crust,bold] SEARCH #[fg=$red,bg=$mantle]"
+                mode_enter_search "#[bg=$red,fg=$crust,bold] SEARCH #[fg=$red,bg=$mantle]"
+                mode_session      "#[bg=$pink,fg=$crust,bold] SESSION #[fg=$pink,bg=$mantle]"
+                mode_tmux         "#[bg=$peach,fg=$crust,bold] TMUX #[fg=$peach,bg=$mantle]"
+
+                tab_normal        "#[fg=$mantle,bg=$surface1] #[fg=$text,bg=$surface1]{name} #[fg=$surface1,bg=$mantle]"
+                tab_active        "#[fg=$mantle,bg=$blue] #[fg=$crust,bg=$blue,bold]{name} #[fg=$blue,bg=$mantle]"
+                tab_separator     ""
+
+                command_cpu_command     "/Users/roderik/.config/zellij/scripts/cpu.sh"
+                command_cpu_format      "{stdout} "
+                command_cpu_interval    "5"
+                command_cpu_rendermode  "static"
+
+                command_mem_command     "/Users/roderik/.config/zellij/scripts/mem.sh"
+                command_mem_format      "{stdout} "
+                command_mem_interval    "5"
+                command_mem_rendermode  "static"
+
+                command_git_command     "/Users/roderik/.config/zellij/scripts/git-branch.sh"
+                command_git_format      "{stdout} "
+                command_git_interval    "5"
+                command_git_rendermode  "static"
+                command_git_cwd         "/Users/roderik/Development/dalp"
+
+                datetime          "{format} "
+                datetime_format   "%H:%M %d-%b"
+                datetime_timezone "Europe/Brussels"
+            }
+        }
+        children
+    }
+
+    tab name="editor" focus=true {
+        pane
+    }
+
+    tab name="dev" {
+        pane split_direction="vertical" {
+            pane size="50%" name="server"
+            pane size="50%" name="tests"
+        }
+    }
+
+    tab name="git" {
+        pane
+    }
+}
