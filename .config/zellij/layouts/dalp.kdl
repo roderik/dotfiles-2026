@@ -17,7 +17,7 @@ layout {
                 color_pink     "#f5c2e7"
 
                 format_left  "{mode}#[bg=$mantle] {tabs}"
-                format_right "#[fg=$yellow,bg=$mantle]#[fg=$crust,bg=$yellow,bold] 󰻠 {command_cpu}#[fg=$green,bg=$yellow]#[fg=$crust,bg=$green,bold] 󰍛 {command_mem}#[fg=$mauve,bg=$green]#[fg=$crust,bg=$mauve,bold] 󰊢 {command_git}#[fg=$blue,bg=$mauve]#[fg=$crust,bg=$blue,bold]  {datetime}"
+                format_right "#[fg=$blue,bg=$mantle]#[fg=$crust,bg=$blue,bold]  {datetime}"
                 format_space "#[bg=$mantle]"
 
                 mode_normal       "#[bg=$blue,fg=$crust,bold] NORMAL #[fg=$blue,bg=$mantle]"
@@ -36,21 +36,6 @@ layout {
                 tab_active        "#[fg=$mantle,bg=$blue] #[fg=$crust,bg=$blue,bold]{name} #[fg=$blue,bg=$mantle]"
                 tab_separator     ""
 
-                command_cpu_command     "/Users/roderik/.config/zellij/scripts/cpu.sh"
-                command_cpu_format      "{stdout} "
-                command_cpu_interval    "5"
-                command_cpu_rendermode  "static"
-
-                command_mem_command     "/Users/roderik/.config/zellij/scripts/mem.sh"
-                command_mem_format      "{stdout} "
-                command_mem_interval    "5"
-                command_mem_rendermode  "static"
-
-                command_git_command     "/Users/roderik/.config/zellij/scripts/git-branch.sh"
-                command_git_format      "{stdout} "
-                command_git_interval    "5"
-                command_git_rendermode  "static"
-                command_git_cwd         "/Users/roderik/Development/dalp"
 
                 datetime          "{format} "
                 datetime_format   "%H:%M %d-%b"
