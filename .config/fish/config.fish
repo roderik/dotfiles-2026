@@ -73,10 +73,3 @@ alias wtc='git fetch origin main && wt switch --create --base origin/main --exec
 if command -q wt
     wt config shell init fish | source
 end
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Entire CLI shell completion
-# ──────────────────────────────────────────────────────────────────────────────
-if command -q entire
-    entire completion fish | source
-end
