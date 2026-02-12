@@ -131,6 +131,33 @@ wtg() {
   git fetch origin main && wt switch "pr:$pr"
 }
 
+# Create a stacked worktree: wts [branch-name]
+# Selects parent via fzf, creates worktree with wt, registers stack with git-town, launches claude
+wts() {
+  local branch_name="$1"
+
+  # Select parent branch with fzf
+  local parent
+  parent=$({ git branch --format='%(refname:short)'; git branch -r --format='%(refname:short)' | sed 's|^origin/||'; } | sort -u | grep -v '^HEAD$' | \
+    fzf --header "Select parent branch to stack on" \
+        --preview 'git log --oneline --graph -10 {}' \
+        --preview-window=right:50%)
+  [[ -z "$parent" ]] && { echo "No branch selected"; return 1; }
+
+  # Prompt for branch name if not provided
+  if [[ -z "$branch_name" ]]; then
+    echo -n "New branch name: "; read branch_name
+    [[ -z "$branch_name" ]] && { echo "No branch name"; return 1; }
+  fi
+
+  # Create worktree based on parent, launch Claude
+  git fetch origin main
+  wt switch --create "$branch_name" --base "$parent" --execute=claude
+
+  # Register stacked parent with git-town
+  git-town set-parent "$parent"
+}
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Tool completions (cached to fpath)
 # ──────────────────────────────────────────────────────────────────────────────
@@ -144,6 +171,7 @@ wtg() {
   [[ ! -f "$comp_dir/_helm" ]]    && helm completion zsh > "$comp_dir/_helm" 2>/dev/null
   [[ ! -f "$comp_dir/_kubectl" ]] && kubectl completion zsh > "$comp_dir/_kubectl" 2>/dev/null
   [[ ! -f "$comp_dir/_op" ]]      && op completion zsh > "$comp_dir/_op" 2>/dev/null
+  [[ ! -f "$comp_dir/_git-town" ]] && git-town completions zsh > "$comp_dir/_git-town" 2>/dev/null
   :
 }
 
@@ -216,3 +244,6 @@ zj() {
   fi
   zellij attach -c "$@"
 }
+
+# Entire CLI shell completion
+autoload -Uz compinit && compinit && source <(entire completion zsh)
