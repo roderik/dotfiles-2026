@@ -57,3 +57,5 @@
 	aiModelProvider = openai
 [coderabbit]
 	machineId = cli/dbdba1f8d387485b9bfbc4df65f29eaa
+[git-town]
+	github-connector = gh

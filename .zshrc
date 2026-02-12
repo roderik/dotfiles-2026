@@ -135,14 +135,24 @@ wtg() {
 # Selects parent via fzf, creates worktree with wt, registers stack with git-town, launches claude
 wts() {
   local branch_name="$1"
+  local current_branch
+  current_branch=$(git branch --show-current 2>/dev/null)
 
-  # Select parent branch with fzf
+  # Pick parent: current branch (default) or choose from list
   local parent
-  parent=$({ git branch --format='%(refname:short)'; git branch -r --format='%(refname:short)' | sed 's|^origin/||'; } | sort -u | grep -v '^HEAD$' | \
-    fzf --header "Select parent branch to stack on" \
-        --preview 'git log --oneline --graph -10 {}' \
-        --preview-window=right:50%)
-  [[ -z "$parent" ]] && { echo "No branch selected"; return 1; }
+  parent=$(printf '%s\n%s' "$current_branch (current)" "Pick from list..." | \
+    fzf --header "Stack on which parent?" --height=5 --no-preview)
+  [[ -z "$parent" ]] && { echo "No parent selected"; return 1; }
+
+  if [[ "$parent" == "Pick from list..." ]]; then
+    parent=$({ git branch --format='%(refname:short)'; git branch -r --format='%(refname:short)' | sed 's|^origin/||'; } | sort -u | grep -v '^HEAD$' | \
+      fzf --header "Select parent branch" \
+          --preview 'git log --oneline --graph -10 {}' \
+          --preview-window=right:50%)
+    [[ -z "$parent" ]] && { echo "No branch selected"; return 1; }
+  else
+    parent="$current_branch"
+  fi
 
   # Prompt for branch name if not provided
   if [[ -z "$branch_name" ]]; then
@@ -150,12 +160,15 @@ wts() {
     [[ -z "$branch_name" ]] && { echo "No branch name"; return 1; }
   fi
 
-  # Create worktree based on parent, launch Claude
+  # Create worktree based on parent
   git fetch origin main
-  wt switch --create "$branch_name" --base "$parent" --execute=claude
+  wt switch --create "$branch_name" --base "$parent"
 
-  # Register stacked parent with git-town
+  # Register stacked parent with git-town (must happen before claude launches)
   git-town set-parent "$parent"
+
+  # Launch Claude in the new worktree
+  claude
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
