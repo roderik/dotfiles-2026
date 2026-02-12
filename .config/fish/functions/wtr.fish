@@ -9,7 +9,7 @@ function wtr
 
     set -l main_worktree (git worktree list --porcelain | head -1 | sed 's/^worktree //')
 
-    if string match -q "$main_worktree*" "$PWD"
+    if test "$PWD" = "$main_worktree"; or string match -q "$main_worktree/*" "$PWD"
         echo "Error: already in the main worktree — nothing to remove"
         return 1
     end
