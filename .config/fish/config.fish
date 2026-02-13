@@ -44,10 +44,10 @@ end
 # ──────────────────────────────────────────────────────────────────────────────
 if not functions -q _atuin_search; and command -q atuin
     atuin init fish --disable-up-arrow | source
+    # Bind up arrow to full atuin search (like Ctrl-R)
+    bind \e\[A _atuin_search
+    bind \eOA _atuin_search
 end
-# Bind up arrow to full atuin search (like Ctrl-R)
-bind \e\[A _atuin_search
-bind \eOA _atuin_search
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Environment variables

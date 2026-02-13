@@ -26,10 +26,8 @@ function wts
         end
     end
 
-    # Create worktree based on parent, launch Claude
+    # Register stacked parent with git-town, then create worktree and launch Claude
     git fetch origin main
-    wt switch --create "$branch_name" --base "$parent" --execute=claude
-
-    # Register stacked parent with git-town
     git-town set-parent "$parent"
+    wt switch --create "$branch_name" --base "$parent" --execute=claude
 end
