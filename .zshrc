@@ -85,17 +85,54 @@ alias vim='nvim'
 alias vi='nvim'
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Claude Code
+# zmx — session persistence for terminal processes
 # ──────────────────────────────────────────────────────────────────────────────
-alias claude='command claude --dangerously-skip-permissions'
+zm() {
+  if [[ -n "$ZMX_SESSION" ]]; then
+    echo "Already in zmx session: $ZMX_SESSION"
+    return 0
+  fi
+  local name="${1:-default}"
+  shift 2>/dev/null
+  zmx attach "$name" "$@"
+}
+alias zml='zmx list'
+alias zmk='zmx kill'
+alias zmh='zmx history'
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Claude Code — wrapped in zmx for session persistence
+# ──────────────────────────────────────────────────────────────────────────────
+claude() {
+  if [[ -n "$ZMX_SESSION" ]]; then
+    command claude --dangerously-skip-permissions "$@"
+    return
+  fi
+  local git_root name
+  git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+  name="claude-${${git_root:+${git_root:t}}:-${PWD:t}}"
+  zmx attach "$name" command claude --dangerously-skip-permissions "$@"
+}
 alias c='claude'
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Codex
+# Codex — wrapped in zmx for session persistence
 # ──────────────────────────────────────────────────────────────────────────────
+codex() {
+  if [[ -n "$ZMX_SESSION" ]]; then
+    command codex "$@"
+    return
+  fi
+  local git_root name
+  git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+  name="codex-${${git_root:+${git_root:t}}:-${PWD:t}}"
+  zmx attach "$name" command codex "$@"
+}
 alias x='codex'
 
-alias wtc='git fetch origin main && wt switch --create --base origin/main --execute=claude'
+wtc() {
+  git fetch origin main && wt switch --create --base origin/main && claude
+}
 
 # Remove current worktree and return to main
 wtr() {
@@ -128,7 +165,7 @@ wtg() {
     echo "Usage: wtg <number>"
     return 1
   fi
-  git fetch origin main && wt switch "pr:$pr"
+  git fetch origin main && wt switch "pr:$pr" && claude
 }
 
 # Create a stacked worktree: wts [branch-name]
@@ -185,6 +222,7 @@ wts() {
   [[ ! -f "$comp_dir/_kubectl" ]] && kubectl completion zsh > "$comp_dir/_kubectl" 2>/dev/null
   [[ ! -f "$comp_dir/_op" ]]      && op completion zsh > "$comp_dir/_op" 2>/dev/null
   [[ ! -f "$comp_dir/_git-town" ]] && git-town completions zsh > "$comp_dir/_git-town" 2>/dev/null
+  [[ ! -f "$comp_dir/_zmx" ]]      && zmx completions zsh > "$comp_dir/_zmx" 2>/dev/null
   :
 }
 
@@ -200,6 +238,7 @@ _set_terminal_title() {
   else
     title="${PWD:t}"
   fi
+  [[ -n "$ZMX_SESSION" ]] && title="[$ZMX_SESSION] $title"
   print -Pn "\e]0;${title}\a"
 }
 add-zsh-hook precmd _set_terminal_title
