@@ -1,4 +1,5 @@
 export PATH="$HOME/.local/bin:$PATH"
+setopt autocd
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Completion cache directory (must be before zimfw init)
@@ -55,6 +56,8 @@ source "$ATUIN_CACHE"
 bindkey '^[[A' atuin-search
 bindkey '^[OA' atuin-search
 
+export EDITOR=nvim
+export VISUAL=nvim
 export HOMEBREW_NO_ENV_HINTS=1
 export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
 
@@ -65,6 +68,11 @@ export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+# Use tmux popup for fzf when inside tmux
+if [[ -n "$TMUX" ]]; then
+  export FZF_TMUX_OPTS="-p 80%,60%"
+  export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --tmux center,80%,60%"
+fi
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Bat - better cat with syntax highlighting
@@ -79,39 +87,24 @@ alias cat='bat --paging=never'
 alias ps='procs'
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Eza - modern ls with git integration
+# ──────────────────────────────────────────────────────────────────────────────
+alias ls='eza'
+alias ll='eza -l --git --icons'
+alias la='eza -la --git --icons'
+alias lt='eza --tree --level=2 --icons'
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Neovim
 # ──────────────────────────────────────────────────────────────────────────────
 alias vim='nvim'
 alias vi='nvim'
 
 # ──────────────────────────────────────────────────────────────────────────────
-# zmx — session persistence for terminal processes
-# ──────────────────────────────────────────────────────────────────────────────
-zm() {
-  if [[ -n "$ZMX_SESSION" ]]; then
-    echo "Already in zmx session: $ZMX_SESSION"
-    return 0
-  fi
-  local name="${1:-default}"
-  shift 2>/dev/null
-  zmx attach "$name" "$@"
-}
-alias zml='zmx list'
-alias zmk='zmx kill'
-alias zmh='zmx history'
-
-# ──────────────────────────────────────────────────────────────────────────────
 # Claude Code — wrapped in zmx for session persistence
 # ──────────────────────────────────────────────────────────────────────────────
 claude() {
-  if [[ -n "$ZMX_SESSION" ]]; then
     command claude --dangerously-skip-permissions "$@"
-    return
-  fi
-  local git_root name
-  git_root=$(git rev-parse --show-toplevel 2>/dev/null)
-  name="claude-${${git_root:+${git_root:t}}:-${PWD:t}}"
-  zmx attach "$name" command claude --dangerously-skip-permissions "$@"
 }
 alias c='claude'
 
@@ -119,19 +112,12 @@ alias c='claude'
 # Codex — wrapped in zmx for session persistence
 # ──────────────────────────────────────────────────────────────────────────────
 codex() {
-  if [[ -n "$ZMX_SESSION" ]]; then
     command codex "$@"
-    return
-  fi
-  local git_root name
-  git_root=$(git rev-parse --show-toplevel 2>/dev/null)
-  name="codex-${${git_root:+${git_root:t}}:-${PWD:t}}"
-  zmx attach "$name" command codex "$@"
 }
 alias x='codex'
 
 wtc() {
-  git fetch origin main && wt switch --create --base origin/main && claude
+  git fetch origin main && wt switch --create --base origin/main "$@" && claude
 }
 
 # Remove current worktree and return to main
@@ -239,12 +225,14 @@ _set_terminal_title() {
     title="${PWD:t}"
   fi
   [[ -n "$ZMX_SESSION" ]] && title="[$ZMX_SESSION] $title"
-  print -Pn "\e]0;${title}\a"
+  if [[ -n "$TMUX" ]]; then
+    # Set tmux pane title (shows in status bar with #{pane_title})
+    printf '\033]2;%s\033\\' "$title"
+  else
+    print -Pn "\e]0;${title}\a"
+  fi
 }
 add-zsh-hook precmd _set_terminal_title
-
-# bun completions
-[ -s "/Users/roderik/.bun/_bun" ] && source "/Users/roderik/.bun/_bun"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Worktrunk - worktree cleanup helper
@@ -285,7 +273,7 @@ wt-cleanup() {
   echo "Done."
 }
 
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh 2>/dev/null)"; fi
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Zellij - attach or create session via `zj`
@@ -297,5 +285,12 @@ zj() {
   zellij attach -c "$@"
 }
 
-# Entire CLI shell completion
-autoload -Uz compinit && compinit && source <(entire completion zsh)
+# ──────────────────────────────────────────────────────────────────────────────
+# Tmux auto-attach (skip in nested tmux, VS Code, or Zellij)
+# ──────────────────────────────────────────────────────────────────────────────
+if command -v tmux &>/dev/null && [[ -z "$TMUX" && -z "$ZELLIJ" && "$TERM_PROGRAM" != "vscode" && -z "$INSIDE_EMACS" ]]; then
+  tmux new-session -A -s main
+fi
+
+# Entire CLI shell completion (compinit already loaded by zimfw)
+source <(entire completion zsh)
