@@ -1,8 +1,4 @@
 {
-  "statusLine": {
-    "type": "command",
-    "command": "wt list statusline --format=claude-code"
-  },
   "env": {
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
     "DISABLE_COST_WARNINGS": "1",
@@ -19,9 +15,13 @@
   "hooks": {
     "PreToolUse": []
   },
+  "statusLine": {
+    "type": "command",
+    "command": "wt list statusline --format=claude-code"
+  },
   "enabledPlugins": {
     "worktrunk@worktrunk": true
   },
   "skipDangerousModePermissionPrompt": true,
-  "model": "opus[1m]"
+  "model": "opusplan"
 }

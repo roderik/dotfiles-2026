@@ -10,6 +10,9 @@ suppress_unstable_features_warning = true
 [projects."/Users/roderik"]
 trust_level = "trusted"
 
+[projects."/Users/roderik/Development/dalp"]
+trust_level = "trusted"
+
 [profiles.balanced]
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
