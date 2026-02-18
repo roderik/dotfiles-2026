@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "wt list statusline --format=claude-code"
+  },
   "env": {
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
     "DISABLE_COST_WARNINGS": "1",
@@ -12,21 +16,12 @@
     "defaultMode": "bypassPermissions"
   },
   "enableAllProjectMcpServers": true,
+  "hooks": {
+    "PreToolUse": []
+  },
   "enabledPlugins": {
     "worktrunk@worktrunk": true
   },
   "skipDangerousModePermissionPrompt": true,
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/roderik/.claude/hooks/rtk-rewrite.sh"
-          }
-        ]
-      }
-    ]
-  }
+  "model": "opus[1m]"
 }

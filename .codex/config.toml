@@ -74,3 +74,8 @@ collaboration_modes = true
 [[skills.config]]
 enabled = true
 path = "/Users/roderik/.codex/skills/frontend-design/SKILL.md"
+
+[features]
+multi_agent = true
+apps = true
+prevent_idle_sleep = true
