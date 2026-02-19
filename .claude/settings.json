@@ -20,8 +20,9 @@
     "command": "wt list statusline --format=claude-code"
   },
   "enabledPlugins": {
-    "worktrunk@worktrunk": true
+    "worktrunk@worktrunk": true,
+    "figma@claude-plugins-official": true,
+    "solskill@solskill-marketplace": true
   },
-  "skipDangerousModePermissionPrompt": true,
-  "model": "opusplan"
+  "skipDangerousModePermissionPrompt": true
 }

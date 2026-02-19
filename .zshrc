@@ -117,7 +117,7 @@ codex() {
 alias x='codex'
 
 wtc() {
-  git fetch origin main && wt switch --create --base origin/main "$@" && claude
+  git fetch origin main && wt switch --create --base origin/main "$@" && nic
 }
 
 # Remove current worktree and return to main
@@ -151,7 +151,7 @@ wtg() {
     echo "Usage: wtg <number>"
     return 1
   fi
-  git fetch origin main && wt switch "pr:$pr" && claude
+  git fetch origin main && wt switch "pr:$pr" && nic
 }
 
 # Create a stacked worktree: wts [branch-name]
@@ -190,8 +190,51 @@ wts() {
   # Register stacked parent with git-town (must happen before claude launches)
   git-town set-parent "$parent"
 
-  # Launch Claude in the new worktree
-  claude
+  # Launch nic in the new worktree
+  nic
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# nic — new interactive coding session (tmux with standard tabs)
+# ──────────────────────────────────────────────────────────────────────────────
+nic() {
+  local dir="${1:-.}"
+  dir="$(cd "$dir" && pwd)" || { echo "Invalid directory: $1"; return 1; }
+  local session_name="${2:-$(basename "$dir")}"
+
+  # Don't nest tmux
+  if [[ -n "$TMUX" ]]; then
+    echo "Already in a tmux session. Detach first or run from outside tmux."
+    return 1
+  fi
+
+  # Attach if session already exists
+  if tmux has-session -t "$session_name" 2>/dev/null; then
+    tmux attach-session -t "$session_name"
+    return
+  fi
+
+  # Create session — first window is "claude"
+  tmux new-session -d -s "$session_name" -c "$dir" -n claude
+
+  # Tab 2: vim (nvim)
+  tmux new-window -t "$session_name" -c "$dir" -n vim
+
+  # Tab 3: lazygit
+  tmux new-window -t "$session_name" -c "$dir" -n lazygit
+
+  # Tab 4: codex
+  tmux new-window -t "$session_name" -c "$dir" -n codex
+
+  # Launch commands in each window
+  tmux send-keys -t "$session_name":claude  'claude' C-m
+  tmux send-keys -t "$session_name":vim     'nvim' C-m
+  tmux send-keys -t "$session_name":lazygit 'lazygit' C-m
+  tmux send-keys -t "$session_name":codex   'codex' C-m
+
+  # Focus on claude tab and attach
+  tmux select-window -t "$session_name":claude
+  tmux attach-session -t "$session_name"
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -285,12 +328,6 @@ zj() {
   zellij attach -c "$@"
 }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Tmux auto-attach (skip in nested tmux, VS Code, or Zellij)
-# ──────────────────────────────────────────────────────────────────────────────
-if command -v tmux &>/dev/null && [[ -z "$TMUX" && -z "$ZELLIJ" && "$TERM_PROGRAM" != "vscode" && -z "$INSIDE_EMACS" ]]; then
-  tmux new-session -A -s main
-fi
 
 # Entire CLI shell completion (compinit already loaded by zimfw)
 source <(entire completion zsh)
