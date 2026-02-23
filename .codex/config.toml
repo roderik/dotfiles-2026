@@ -73,6 +73,10 @@ steer = true
 personality = true
 collaboration_modes = true
 
+[profiles.dalp]
+model = "gpt-5.3-codex"
+model_reasoning_effort = "high"
+
 [skills]
 [[skills.config]]
 enabled = true

@@ -17,7 +17,11 @@ if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE:-${ZDOTDIR:-${HOME}}/.zimrc} 
   source /opt/homebrew/opt/zimfw/share/zimfw.zsh init
 fi
 
-source ${ZIM_HOME}/init.zsh
+# Guard against double-init on re-source (use `exec zsh` for full reload)
+if (( ! ${+ZIM_LOADED} )); then
+  source ${ZIM_HOME}/init.zsh
+  ZIM_LOADED=1
+fi
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Bun
@@ -100,24 +104,66 @@ alias lt='eza --tree --level=2 --icons'
 alias vim='nvim'
 alias vi='nvim'
 
+
 # ──────────────────────────────────────────────────────────────────────────────
-# Claude Code — wrapped in zmx for session persistence
+# Zellij - attach or create session named after current directory
 # ──────────────────────────────────────────────────────────────────────────────
-claude() {
-    command claude --dangerously-skip-permissions "$@"
+zj() {
+  local session_name="${${PWD##*/}//./_}"
+  zellij attach "$session_name" 2>/dev/null || zellij --session "$session_name"
 }
+
+zl() {
+  local session
+  session=$(zellij ls -s 2>/dev/null | fzf --height=40% --reverse) || return
+  zellij attach "$session"
+}
+
+zk() {
+  zellij delete-session "${${PWD##*/}//./_}" 2>/dev/null
+  zellij kill-session "${${PWD##*/}//./_}" 2>/dev/null
+}
+
+alias zka='zellij delete-all-sessions -y'
+
+alias claude='claude --dangerously-skip-permissions'
 alias c='claude'
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Codex — wrapped in zmx for session persistence
-# ──────────────────────────────────────────────────────────────────────────────
-codex() {
-    command codex "$@"
-}
 alias x='codex'
+alias oc='opencode'
 
+# Resolve the main worktree root — from inside a repo or via fzf picker
+__wt_repo_root() {
+  local root
+  root=$(git worktree list --porcelain 2>/dev/null | head -1 | sed 's/^worktree //')
+  if [[ -n "$root" ]]; then
+    echo "$root"; return
+  fi
+  root=$(for d in ~/Development/*/; do [[ -d "$d/.git" ]] && echo "${d%/}"; done | sort | \
+    fzf --height=40% --reverse --header "Select repo" --with-nth=-1 --delimiter=/)
+  [[ -n "$root" ]] && echo "$root"
+}
+
+# List worktrees and cd to selection
+wtl() {
+  local repo_root
+  repo_root=$(__wt_repo_root) || return
+  [[ -z "$repo_root" ]] && return
+
+  local target
+  target=$(git -C "$repo_root" worktree list | \
+    fzf --height=40% --reverse --header "Select worktree" | awk '{print $1}')
+  [[ -z "$target" ]] && return
+
+  cd "$target"
+}
+
+# Create a new worktree (works from anywhere)
 wtc() {
-  git fetch origin main && wt switch --create --base origin/main "$@" && nic
+  local repo_root
+  repo_root=$(__wt_repo_root) || return
+  [[ -z "$repo_root" ]] && return
+
+  cd "$repo_root" && git fetch origin main && wt switch --create --base origin/main "$@"
 }
 
 # Remove current worktree and return to main
@@ -144,22 +190,51 @@ wtr() {
   echo "Back in main worktree: $main_worktree"
 }
 
-# Switch to a PR worktree: wtg 123 or wtg #123
+# Pick a PR from fzf and check it out as a worktree
 wtg() {
-  local pr="${1#\#}"
-  if [[ -z "$pr" ]]; then
-    echo "Usage: wtg <number>"
-    return 1
-  fi
-  git fetch origin main && wt switch "pr:$pr" && nic
+  local repo_root
+  repo_root=$(__wt_repo_root) || return
+  [[ -z "$repo_root" ]] && return
+
+  local pr
+  pr=$(gh pr list --repo "$repo_root" --state open --limit 50 \
+    --json number,title,author,headRefName \
+    --template '{{range .}}#{{.number}}	{{.title}} ({{.author.login}}) [{{.headRefName}}]{{"\n"}}{{end}}' | \
+    fzf --height=40% --reverse --header "Select PR" | awk -F'\t' '{print $1}' | tr -d '#')
+  [[ -z "$pr" ]] && return
+
+  cd "$repo_root" && git fetch origin main && wt switch "pr:$pr" && zic
+}
+
+# Delete a worktree via fzf picker
+wtd() {
+  local repo_root
+  repo_root=$(__wt_repo_root) || return
+  [[ -z "$repo_root" ]] && return
+
+  local target
+  target=$(git -C "$repo_root" worktree list | tail -n +2 | \
+    fzf --height=40% --reverse --header "Delete which worktree?" | awk '{print $1}')
+  [[ -z "$target" ]] && return
+
+  local branch
+  branch=$(git -C "$repo_root" worktree list | grep "^$target " | awk '{print $3}' | tr -d '[]')
+
+  echo "Removing worktree: $branch ($target)"
+  wt -C "$repo_root" remove --yes --foreground "$branch"
 }
 
 # Create a stacked worktree: wts [branch-name]
-# Selects parent via fzf, creates worktree with wt, registers stack with git-town, launches claude
+# Selects parent via fzf, creates worktree with wt, registers stack with git-town
 wts() {
   local branch_name="$1"
   local current_branch
   current_branch=$(git branch --show-current 2>/dev/null)
+
+  local repo_root
+  repo_root=$(__wt_repo_root) || return
+  [[ -z "$repo_root" ]] && return
+  cd "$repo_root" || return
 
   # Pick parent: current branch (default) or choose from list
   local parent
@@ -187,55 +262,23 @@ wts() {
   git fetch origin main
   wt switch --create "$branch_name" --base "$parent"
 
-  # Register stacked parent with git-town (must happen before claude launches)
+  # Register stacked parent with git-town
   git-town set-parent "$parent"
-
-  # Launch nic in the new worktree
-  nic
 }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# nic — new interactive coding session (tmux with standard tabs)
-# ──────────────────────────────────────────────────────────────────────────────
-nic() {
-  local dir="${1:-.}"
-  dir="$(cd "$dir" && pwd)" || { echo "Invalid directory: $1"; return 1; }
-  local session_name="${2:-$(basename "$dir")}"
+# Set parent branch for git-town via fzf picker
+gtp() {
+  local parent
+  parent=$({ git branch --format='%(refname:short)'; git branch -r --format='%(refname:short)' | sed 's|^origin/||'; } | sort -u | grep -v '^HEAD$' | \
+    fzf --header "Select parent branch" \
+        --preview 'git log --oneline --graph -10 {}' \
+        --preview-window=right:50%)
+  [[ -z "$parent" ]] && return
 
-  # Don't nest tmux
-  if [[ -n "$TMUX" ]]; then
-    echo "Already in a tmux session. Detach first or run from outside tmux."
-    return 1
-  fi
-
-  # Attach if session already exists
-  if tmux has-session -t "$session_name" 2>/dev/null; then
-    tmux attach-session -t "$session_name"
-    return
-  fi
-
-  # Create session — first window is "claude"
-  tmux new-session -d -s "$session_name" -c "$dir" -n claude
-
-  # Tab 2: vim (nvim)
-  tmux new-window -t "$session_name" -c "$dir" -n vim
-
-  # Tab 3: lazygit
-  tmux new-window -t "$session_name" -c "$dir" -n lazygit
-
-  # Tab 4: codex
-  tmux new-window -t "$session_name" -c "$dir" -n codex
-
-  # Launch commands in each window
-  tmux send-keys -t "$session_name":claude  'claude' C-m
-  tmux send-keys -t "$session_name":vim     'nvim' C-m
-  tmux send-keys -t "$session_name":lazygit 'lazygit' C-m
-  tmux send-keys -t "$session_name":codex   'codex' C-m
-
-  # Focus on claude tab and attach
-  tmux select-window -t "$session_name":claude
-  tmux attach-session -t "$session_name"
+  git-town set-parent "$parent"
 }
+
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Tool completions (cached to fpath)
@@ -255,81 +298,15 @@ nic() {
   :
 }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Terminal Title (git root or current directory)
-# ──────────────────────────────────────────────────────────────────────────────
-_set_terminal_title() {
-  local title
-  local git_root
-  git_root=$(git rev-parse --show-toplevel 2>/dev/null)
-  if [[ -n "$git_root" ]]; then
-    title="${git_root:t}"
-  else
-    title="${PWD:t}"
-  fi
-  [[ -n "$ZMX_SESSION" ]] && title="[$ZMX_SESSION] $title"
-  if [[ -n "$TMUX" ]]; then
-    # Set tmux pane title (shows in status bar with #{pane_title})
-    printf '\033]2;%s\033\\' "$title"
-  else
-    print -Pn "\e]0;${title}\a"
-  fi
-}
-add-zsh-hook precmd _set_terminal_title
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Worktrunk - worktree cleanup helper
-# ──────────────────────────────────────────────────────────────────────────────
-wt-cleanup() {
-  local -a to_remove=()
-
-  echo "Scanning worktrees for merged/closed PRs..."
-  echo
-
-  # Strip statusline/symbols (contain ANSI control chars) then extract candidate branches
-  while IFS=$'\t' read -r branch is_main is_current detached; do
-    [[ "$is_main" == "true" ]] && continue
-    [[ "$is_current" == "true" ]] && continue
-    [[ "$detached" == "true" ]] && continue
-    [[ -z "$branch" || "$branch" == "null" || ! "$branch" =~ ^[a-zA-Z0-9] ]] && continue
-
-    local pr_state
-    pr_state=$(gh pr view "$branch" --json state 2>/dev/null | jq -r '.state // empty')
-
-    case "$pr_state" in
-      MERGED)  echo "  ✓ $branch (merged) — will remove";  to_remove+=("$branch") ;;
-      CLOSED)  echo "  ✓ $branch (closed) — will remove";  to_remove+=("$branch") ;;
-      OPEN)    echo "  → $branch (open) — skipping" ;;
-      *)       echo "  ? $branch (no PR) — skipping" ;;
-    esac
-  done < <(wt list --format=json | jq -r '.[] | del(.statusline, .symbols) | [.branch // "", (.is_main | tostring), (.is_current | tostring), (.worktree.detached | tostring)] | @tsv')
-
-  echo
-
-  if [[ ${#to_remove[@]} -eq 0 ]]; then
-    echo "Nothing to clean up."
-    return 0
-  fi
-
-  echo "Removing ${#to_remove[@]} worktree(s)..."
-  wt remove --yes --foreground "${to_remove[@]}"
-  echo "Done."
-}
-
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh 2>/dev/null)"; fi
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Zellij - attach or create session via `zj`
-# ──────────────────────────────────────────────────────────────────────────────
-zj() {
-  if [[ -n "$ZELLIJ" ]]; then
-    return 0
-  fi
-  zellij attach -c "$@"
-}
-
-
-# Entire CLI shell completion (compinit already loaded by zimfw)
-source <(entire completion zsh)
-
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+
+
+# >>> DALP EXA 1PASSWORD >>>
+if [ -f "/Users/roderik/.local/state/dalp/exa-mcp.zsh" ]; then
+  source "/Users/roderik/.local/state/dalp/exa-mcp.zsh"
+fi
+# <<< DALP EXA 1PASSWORD <<<
+
+# bun completions
+[ -s "/Users/roderik/.bun/_bun" ] && source "/Users/roderik/.bun/_bun"

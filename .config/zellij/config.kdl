@@ -134,6 +134,16 @@ keybinds clear-defaults=true {
         }
     }
     shared_except "locked" {
+        bind "Super c" { Copy; }
+        bind "Super t" { NewTab; SwitchToMode "normal"; }
+        bind "Super n" { NewPane; SwitchToMode "normal"; }
+        bind "Super d" { NewPane "down"; SwitchToMode "normal"; }
+        bind "Super Shift d" { NewPane "right"; SwitchToMode "normal"; }
+        bind "Super w" { CloseFocus; SwitchToMode "normal"; }
+        bind "Super Alt Left" { GoToPreviousTab; }
+        bind "Super Alt Right" { GoToNextTab; }
+        bind "Super {" { GoToPreviousTab; }
+        bind "Super }" { GoToNextTab; }
         bind "Alt left" { MoveFocusOrTab "left"; }
         bind "Alt down" { MoveFocus "down"; }
         bind "Alt up" { MoveFocus "up"; }
@@ -247,7 +257,6 @@ keybinds clear-defaults=true {
 // Plugin aliases
 plugins {
     about location="zellij:about"
-    compact-bar location="zellij:compact-bar"
     configuration location="zellij:configuration"
     filepicker location="zellij:strider" {
         cwd "/"
@@ -255,17 +264,11 @@ plugins {
     plugin-manager location="zellij:plugin-manager"
     session-manager location="zellij:session-manager"
     status-bar location="zellij:status-bar"
-    strider location="zellij:strider"
     tab-bar location="zellij:tab-bar"
+    strider location="zellij:strider"
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
     }
-    zjstatus location="https://github.com/dj95/zjstatus/releases/download/v0.22.0/zjstatus.wasm"
-}
-
-// Preload zjstatus in background
-load_plugins {
-    "zjstatus"
 }
 
 // Clipboard (macOS)
@@ -273,7 +276,7 @@ copy_command "pbcopy"
 copy_on_select true
 
 // UI
-simplified_ui true
+simplified_ui false
 pane_frames false
 mouse_mode true
 styled_underlines true
