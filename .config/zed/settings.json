@@ -11,7 +11,7 @@
     "tree_view": true
   },
   "ui_font_family": "Berkeley Mono",
-  "icon_theme": "Catppuccin Macchiato",
+  "icon_theme": "Zed (Default)",
   "session": {
     "trust_all_worktrees": true,
   },
@@ -30,6 +30,6 @@
   "theme": {
     "mode": "system",
     "light": "Catppuccin Frappé",
-    "dark": "Catppuccin Macchiato",
+    "dark": "Vesper",
   },
 }

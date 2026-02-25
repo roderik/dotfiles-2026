@@ -197,10 +197,14 @@ wtg() {
   [[ -z "$repo_root" ]] && return
 
   local pr
-  pr=$(gh pr list --repo "$repo_root" --state open --limit 50 \
-    --json number,title,author,headRefName \
-    --template '{{range .}}#{{.number}}	{{.title}} ({{.author.login}}) [{{.headRefName}}]{{"\n"}}{{end}}' | \
-    fzf --height=40% --reverse --header "Select PR" | awk -F'\t' '{print $1}' | tr -d '#')
+  if [[ -n "$1" ]]; then
+    pr="$1"
+  else
+    pr=$(cd "$repo_root" && gh pr list --state open --limit 50 \
+      --json number,title,author,headRefName \
+      --template '{{range .}}#{{.number}}	{{.title}} ({{.author.login}}) [{{.headRefName}}]{{"\n"}}{{end}}' | \
+      fzf --height=40% --reverse --header "Select PR" | awk -F'\t' '{print $1}' | tr -d '#')
+  fi
   [[ -z "$pr" ]] && return
 
   cd "$repo_root" && git fetch origin main && wt switch "pr:$pr" && zic
