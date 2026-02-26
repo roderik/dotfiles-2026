@@ -3,6 +3,12 @@
     "commit": "",
     "pr": ""
   },
+  "permissions": {
+    "allow": [
+      "Bash(claude:*)"
+    ],
+    "defaultMode": "dontAsk"
+  },
   "hooks": {
     "PreToolUse": [
       {
