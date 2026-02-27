@@ -1,4 +1,4 @@
-notify = ["/Users/roderik/.codex/notify.sh"]
+notify = [ "/Users/roderik/.codex/notify.sh" ]
 model = "gpt-5.3-codex"
 model_reasoning_effort = "xhigh"
 profile = "yolo"
@@ -21,33 +21,8 @@ model_reasoning_effort = "medium"
 model_reasoning_summary = "detailed"
 web_search = "live"
 
-[profiles.safe]
-approval_policy = "on-failure"
-sandbox_mode = "read-only"
-model = "gpt-5.2-codex"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "detailed"
-web_search = "live"
-
-[profiles.yolo]
-approval_policy = "never"
-sandbox_mode = "danger-full-access"
-model = "gpt-5.3-codex"
-model_reasoning_effort = "xhigh"
-model_reasoning_summary = "detailed"
-web_search = "live"
-
 [profiles.balanced.sandbox_workspace_write]
 network_access = true
-
-[profiles.safe.sandbox_workspace_write]
-network_access = true
-
-[profiles.yolo.sandbox_workspace_write]
-network_access = true
-
-[tui]
-alternate_screen = "auto"
 
 [profiles.balanced.features]
 unified_exec = true
@@ -57,6 +32,17 @@ steer = true
 personality = true
 collaboration_modes = true
 
+[profiles.safe]
+approval_policy = "on-failure"
+sandbox_mode = "read-only"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "detailed"
+web_search = "live"
+
+[profiles.safe.sandbox_workspace_write]
+network_access = true
+
 [profiles.safe.features]
 unified_exec = true
 shell_snapshot = true
@@ -64,6 +50,17 @@ apps = true
 steer = true
 personality = true
 collaboration_modes = true
+
+[profiles.yolo]
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+model_reasoning_summary = "detailed"
+web_search = "live"
+
+[profiles.yolo.sandbox_workspace_write]
+network_access = true
 
 [profiles.yolo.features]
 unified_exec = true
@@ -77,7 +74,10 @@ collaboration_modes = true
 model = "gpt-5.3-codex"
 model_reasoning_effort = "high"
 
-[skills]
+[tui]
+alternate_screen = "auto"
+theme = "nord"
+
 [[skills.config]]
 enabled = true
 path = "/Users/roderik/.codex/skills/frontend-design/SKILL.md"
@@ -86,3 +86,8 @@ path = "/Users/roderik/.codex/skills/frontend-design/SKILL.md"
 multi_agent = true
 apps = true
 prevent_idle_sleep = true
+js_repl = true
+
+[mcp_servers.pencil]
+command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
+args = [ "--app", "desktop" ]

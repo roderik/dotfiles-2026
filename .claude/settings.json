@@ -5,7 +5,8 @@
   },
   "permissions": {
     "allow": [
-      "Bash(claude:*)"
+      "Bash(claude:*)",
+      "mcp__pencil"
     ],
     "defaultMode": "dontAsk"
   },
@@ -52,5 +53,13 @@
       }
     ]
   },
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "enabledPlugins": {
+    "context-mode@claude-context-mode": true
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bunx -y ccstatusline@latest",
+    "padding": 0
+  }
 }
