@@ -63,20 +63,38 @@ bindkey '^[OA' atuin-search
 export EDITOR=nvim
 export VISUAL=nvim
 export HOMEBREW_NO_ENV_HINTS=1
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # FZF - use fd for faster file finding and bat for preview
 # ──────────────────────────────────────────────────────────────────────────────
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+export FZF_ALT_C_OPTS='--preview "eza --tree --level=2 --icons {}"'
 # Use tmux popup for fzf when inside tmux
 if [[ -n "$TMUX" ]]; then
   export FZF_TMUX_OPTS="-p 80%,60%"
   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --tmux center,80%,60%"
 fi
+bindkey "ç" fzf-cd-widget
+
+_fzf_comprun() {
+  local command=$1
+  shift
+  case "$command" in
+    cd) fzf "$@" --preview 'eza --tree --level=2 --icons {} | head -200' ;;
+    *)  fzf "$@" ;;
+  esac
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SSH - load keys from keychain
+# ──────────────────────────────────────────────────────────────────────────────
+ssh-add -A 2>/dev/null
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Bat - better cat with syntax highlighting
@@ -88,6 +106,7 @@ alias cat='bat --paging=never'
 # ──────────────────────────────────────────────────────────────────────────────
 # Procs - modern ps replacement
 # ──────────────────────────────────────────────────────────────────────────────
+alias ping='prettyping --nolegend'
 alias ps='procs'
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -126,8 +145,7 @@ zk() {
 
 alias zka='zellij delete-all-sessions -y'
 
-alias claude='claude --dangerously-skip-permissions'
-alias c='claude'
+alias c='claude --dangerously-skip-permissions'
 alias x='codex'
 alias oc='opencode'
 

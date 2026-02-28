@@ -50,31 +50,13 @@
 
 theme = Vesper
 font-family = Berkeley Mono
+font-size = 12.5
+font-thicken = true
+adjust-cell-height = 15%
+window-padding-x = 8
+window-padding-y = 4
 background-opacity = 0.8
 background-blur = 20
-cursor-opacity = 0.7
-font-thicken
-window-save-state = always
-window-padding-balance
 copy-on-select = clipboard
 keybind = shift+enter=text:\x1b\r
 auto-update-channel = tip
-
-shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
-
-adjust-cursor-thickness = 175%
-adjust-cell-width = -4%
-window-padding-x = 12
-window-padding-y = 10
-window-colorspace = display-p3
-
-# Opacity for unfocused splits (0.0 to 1.0)
-unfocused-split-opacity = 0.85
-
-# Fill color for unfocused splits
-unfocused-split-fill = #1e1e2e
-
-# Divider color between splits
-split-divider-color = #45475a
-
-scrollback-limit = 50000

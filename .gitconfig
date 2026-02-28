@@ -13,7 +13,7 @@
 	side-by-side = true
 	line-numbers = true
 [merge]
-	conflictstyle = diff3
+	conflictstyle = zdiff3
 [diff]
   renames = copies
 	colorMoved = plain
@@ -49,6 +49,7 @@
 	ui = auto
 [tag]
 	sort = version:refname
+	gpgsign = true
 [index]
 	sparse = true
 [phantom]
@@ -62,3 +63,21 @@
 	github-connector = gh
 [rebase]
 	updateRefs = true
+	autosquash = true
+[color]
+	ui = auto
+[color "branch"]
+	current = "#FFC799"
+	local = "#A0A0A0"
+	remote = "#99FFE4"
+[color "diff"]
+	meta = "#FFC799" bold
+	frag = "#A0A0A0" bold
+	old = "#FF8080" bold
+	new = "#99FFE4" bold
+[color "status"]
+	added = "#99FFE4"
+	changed = "#FFC799"
+	untracked = "#A0A0A0"
+[alias]
+	pf = push --force-with-lease
