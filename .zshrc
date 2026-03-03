@@ -60,6 +60,13 @@ source "$ATUIN_CACHE"
 bindkey '^[[A' atuin-search
 bindkey '^[OA' atuin-search
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Prompt: always show user on host (asciiship only does this over SSH)
+# ──────────────────────────────────────────────────────────────────────────────
+PS1='
+%(2L.%B%F{yellow}(%L)%f%b .)%(!.%B%F{red}%n%f%b.%B%F{yellow}%n%f%b) on %B%F{green}%m%f%b in %B%F{cyan}%~%f%b${(e)git_info[prompt]}${VIRTUAL_ENV:+" via %B%F{yellow}${VIRTUAL_ENV:t}%f%b"}${duration_info}
+%B%(1j.%F{blue}*%f .)%(?.%F{green}.%F{red}%? )$(_prompt_asciiship_vimode)%f%b '
+
 export EDITOR=nvim
 export VISUAL=nvim
 export HOMEBREW_NO_ENV_HINTS=1
@@ -95,6 +102,13 @@ _fzf_comprun() {
 # SSH - load keys from keychain
 # ──────────────────────────────────────────────────────────────────────────────
 ssh-add -A 2>/dev/null
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Tmux - auto attach/create session on SSH/Mosh connections
+# ──────────────────────────────────────────────────────────────────────────────
+if [[ -z "$TMUX" ]] && [[ -n "$SSH_CONNECTION" || -n "$MOSH" ]]; then
+  tmux new-session -A -s main
+fi
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Bat - better cat with syntax highlighting
@@ -332,3 +346,9 @@ fi
 
 # bun completions
 [ -s "/Users/roderik/.bun/_bun" ] && source "/Users/roderik/.bun/_bun"
+
+# Added by git-ai installer on Sat Feb 28 19:02:23 CET 2026
+export PATH="/Users/roderik/.git-ai/bin:$PATH"
+
+# cubic
+export PATH=/Users/roderik/.cubic/bin:$PATH
