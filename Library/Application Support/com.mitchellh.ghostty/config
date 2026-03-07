@@ -51,8 +51,8 @@
 theme = Vesper
 font-family = Berkeley Mono
 font-size = 12.5
-font-thicken = true
-adjust-cell-height = 15%
+font-thicken = false
+bold-color = bright
 window-padding-x = 8
 window-padding-y = 4
 background-opacity = 0.8

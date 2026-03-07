@@ -1,11 +1,112 @@
-notify = [ "/Users/roderik/.codex/notify.sh" ]
+cli_auth_credentials_store = "auto"
+file_opener = "none"
+mcp_oauth_credentials_store = "auto"
 model = "gpt-5.3-codex"
 model_reasoning_effort = "xhigh"
+notify = [
+    "/Users/roderik/.git-ai/bin/git-ai",
+    "checkpoint",
+    "codex",
+    "--hook-input",
+]
 profile = "yolo"
-file_opener = "none"
-cli_auth_credentials_store = "auto"
-mcp_oauth_credentials_store = "auto"
 suppress_unstable_features_warning = true
+
+[features]
+apps = true
+js_repl = true
+multi_agent = true
+prevent_idle_sleep = true
+
+[mcp_servers.figma]
+type = "http"
+url = "https://mcp.figma.com/mcp"
+
+[mcp_servers.pencil]
+args = [
+    "--app",
+    "desktop",
+]
+command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
+
+[profiles.balanced]
+approval_policy = "on-request"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "detailed"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+[profiles.balanced.features]
+apps = true
+collaboration_modes = true
+personality = true
+shell_snapshot = true
+steer = true
+unified_exec = true
+
+[profiles.balanced.sandbox_workspace_write]
+network_access = true
+
+[profiles.dalp]
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+service_tier = "fast"
+
+[profiles.safe]
+approval_policy = "on-failure"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "detailed"
+sandbox_mode = "read-only"
+web_search = "live"
+
+[profiles.safe.features]
+apps = true
+collaboration_modes = true
+personality = true
+shell_snapshot = true
+steer = true
+unified_exec = true
+
+[profiles.safe.sandbox_workspace_write]
+network_access = true
+
+[profiles.yolo]
+approval_policy = "never"
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+model_reasoning_summary = "detailed"
+sandbox_mode = "danger-full-access"
+web_search = "live"
+
+[profiles.yolo.features]
+apps = true
+collaboration_modes = true
+personality = true
+shell_snapshot = true
+steer = true
+unified_exec = true
+
+[profiles.yolo.sandbox_workspace_write]
+network_access = true
+
+[profiles.mcp-agent]
+approval_policy = "never"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "concise"
+sandbox_mode = "read-only"
+
+[profiles.mcp-agent.features]
+apps = false
+collaboration_modes = false
+personality = false
+shell_snapshot = false
+steer = false
+unified_exec = false
+js_repl = false
+multi_agent = false
 
 [projects."/Users/roderik"]
 trust_level = "trusted"
@@ -13,81 +114,11 @@ trust_level = "trusted"
 [projects."/Users/roderik/Development/dalp"]
 trust_level = "trusted"
 
-[profiles.balanced]
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-model = "gpt-5.2-codex"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "detailed"
-web_search = "live"
-
-[profiles.balanced.sandbox_workspace_write]
-network_access = true
-
-[profiles.balanced.features]
-unified_exec = true
-shell_snapshot = true
-apps = true
-steer = true
-personality = true
-collaboration_modes = true
-
-[profiles.safe]
-approval_policy = "on-failure"
-sandbox_mode = "read-only"
-model = "gpt-5.2-codex"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "detailed"
-web_search = "live"
-
-[profiles.safe.sandbox_workspace_write]
-network_access = true
-
-[profiles.safe.features]
-unified_exec = true
-shell_snapshot = true
-apps = true
-steer = true
-personality = true
-collaboration_modes = true
-
-[profiles.yolo]
-approval_policy = "never"
-sandbox_mode = "danger-full-access"
-model = "gpt-5.3-codex"
-model_reasoning_effort = "xhigh"
-model_reasoning_summary = "detailed"
-web_search = "live"
-
-[profiles.yolo.sandbox_workspace_write]
-network_access = true
-
-[profiles.yolo.features]
-unified_exec = true
-shell_snapshot = true
-apps = true
-steer = true
-personality = true
-collaboration_modes = true
-
-[profiles.dalp]
-model = "gpt-5.3-codex"
-model_reasoning_effort = "high"
-
-[tui]
-alternate_screen = "auto"
-theme = "nord"
-
 [[skills.config]]
 enabled = true
 path = "/Users/roderik/.codex/skills/frontend-design/SKILL.md"
 
-[features]
-multi_agent = true
-apps = true
-prevent_idle_sleep = true
-js_repl = true
-
-[mcp_servers.pencil]
-command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
-args = [ "--app", "desktop" ]
+[tui]
+alternate_screen = "auto"
+theme = "nord"
+status_line = ["model-with-reasoning", "context-remaining", "current-dir", "git-branch", "context-used", "context-window-size", "used-tokens"]

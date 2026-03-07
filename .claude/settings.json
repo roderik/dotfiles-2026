@@ -13,31 +13,40 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|mcp__.*",
+        "matcher": "Bash|Read|Grep|WebFetch|Agent|Task|mcp__plugin_context-mode_context-mode__execute|mcp__plugin_context-mode_context-mode__execute_file|mcp__plugin_context-mode_context-mode__batch_execute",
         "hooks": [
           {
             "type": "command",
-            "command": "turbocommit hook pre-tool-use"
+            "command": "node /Users/roderik/.claude/plugins/cache/claude-context-mode/context-mode/1.0.14/hooks/pretooluse.mjs"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun /private/var/folders/_j/pk_c6f051gb4ns8tn43m9jkh0000gn/T/bunx-501-moshi-hooks@latest/node_modules/moshi-hooks/src/index.ts # moshi-hooks",
+            "async": true
           }
         ]
       }
     ],
     "SessionStart": [
       {
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "turbocommit hook session-start"
+            "command": "node /Users/roderik/.claude/plugins/cache/claude-context-mode/context-mode/0.9.20/hooks/sessionstart.mjs"
           }
         ]
-      }
-    ],
-    "SessionEnd": [
+      },
       {
         "hooks": [
           {
             "type": "command",
-            "command": "turbocommit hook session-end"
+            "command": "bun /private/var/folders/_j/pk_c6f051gb4ns8tn43m9jkh0000gn/T/bunx-501-moshi-hooks@latest/node_modules/moshi-hooks/src/index.ts # moshi-hooks",
+            "async": true
           }
         ]
       }
@@ -47,19 +56,80 @@
         "hooks": [
           {
             "type": "command",
-            "command": "turbocommit hook stop"
+            "command": "bun /private/var/folders/_j/pk_c6f051gb4ns8tn43m9jkh0000gn/T/bunx-501-moshi-hooks@latest/node_modules/moshi-hooks/src/index.ts # moshi-hooks",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun /private/var/folders/_j/pk_c6f051gb4ns8tn43m9jkh0000gn/T/bunx-501-moshi-hooks@latest/node_modules/moshi-hooks/src/index.ts # moshi-hooks",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun /private/var/folders/_j/pk_c6f051gb4ns8tn43m9jkh0000gn/T/bunx-501-moshi-hooks@latest/node_modules/moshi-hooks/src/index.ts # moshi-hooks",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun /private/var/folders/_j/pk_c6f051gb4ns8tn43m9jkh0000gn/T/bunx-501-moshi-hooks@latest/node_modules/moshi-hooks/src/index.ts # moshi-hooks",
+            "async": true
           }
         ]
       }
     ]
   },
-  "skipDangerousModePermissionPrompt": true,
-  "enabledPlugins": {
-    "context-mode@claude-context-mode": true
-  },
   "statusLine": {
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
     "padding": 0
-  }
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "building-secure-contracts@trailofbits": true,
+    "audit-context-building@trailofbits": true,
+    "entry-point-analyzer@trailofbits": true,
+    "static-analysis@trailofbits": true,
+    "spec-to-code-compliance@trailofbits": true,
+    "differential-review@trailofbits": true,
+    "sharp-edges@trailofbits": true,
+    "variant-analysis@trailofbits": true,
+    "claude-md-management@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "context-mode@claude-context-mode": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "trailofbits": {
+      "source": {
+        "source": "github",
+        "repo": "trailofbits/skills"
+      }
+    }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "effortLevel": "high"
 }
