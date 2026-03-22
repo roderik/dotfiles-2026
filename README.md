@@ -167,14 +167,43 @@ Update: `npx skills update`
 
 ---
 
-### OpenClaw Skills
+### [OpenClaw](https://github.com/openclaw/openclaw)
 
-Custom skills installed at `~/.agents/skills/`.
+Personal AI assistant gateway. Runs locally, connects to any model provider.
 
-| Skill | Source | Description |
-|-------|--------|-------------|
-| `dalp-dev` | `~/.agents/skills/dalp-dev.skill` | DALP project development conventions |
-| `dev-status` | `~/.agents/skills/dev-status.skill` | Development status reporting |
+**Config contains auth tokens — NOT tracked by yadm.** Set up manually on each machine.
+
+```shell
+# Install
+openclaw onboard --install-daemon
+
+# Start the gateway
+openclaw gateway --port 18789 --verbose
+
+# Verify
+openclaw doctor
+```
+
+Config: `~/.openclaw/openclaw.json` (model + auth — do NOT commit)
+
+```json
+{
+  "agent": {
+    "model": "anthropic/claude-opus-4-6"
+  }
+}
+```
+
+Docs: [Getting started](https://docs.openclaw.ai/start/getting-started) | [Configuration](https://docs.openclaw.ai/gateway/configuration) | [Models + auth](https://docs.openclaw.ai/concepts/models)
+
+#### OpenClaw Skills
+
+Custom skills live at `~/.agents/skills/`. Install third-party skills with `npx skills add <repo>`. The tracked skills below are project-specific and managed by yadm.
+
+| Skill | Description |
+|-------|-------------|
+| `dalp-dev` | DALP project development conventions |
+| `dev-status` | Development status reporting |
 ---
 
 ### Editor
