@@ -111,21 +111,6 @@ Status line plugin showing context usage, active tools, running agents, and task
 # Restart Claude Code
 ```
 
-#### [code-review-graph](https://github.com/tirth8205/code-review-graph)
-
-Local knowledge graph for Claude Code. Builds a persistent map of the codebase so Claude reads only what matters — 6.8x fewer tokens on reviews.
-
-```shell
-# Inside Claude Code:
-/plugin marketplace add tirth8205/code-review-graph
-/plugin install code-review-graph@code-review-graph
-
-# Then in your project:
-# "Build the code review graph for this project"
-```
-
-Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/).
-
 #### [fff (Fast File Finder)](https://github.com/dmtrKovalenko/fff.nvim)
 
 Frecency-ranked file search MCP server. Also a Neovim plugin. Boosts git-dirty files and recently/frequently accessed files.
