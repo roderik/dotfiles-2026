@@ -1,0 +1,31 @@
+[core]
+	pager = delta
+	attributesfile = /Users/roderik/.config/git/attributes
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	dark = true
+	line-numbers = true
+	side-by-side = true
+[merge]
+	conflictstyle = zdiff3
+[diff]
+	colorMoved = default
+	tool = difftastic
+[commit]
+	gpgsign = true
+[gpg]
+	format = ssh
+[user]
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA0+bsCoH2OJejgy1f89x6ngW7/sqYWqM949diNIo449
+	email = roderik@settlemint.com
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[difftool "difftastic"]
+	cmd = difft \"$LOCAL\" \"$REMOTE\"
+[difftool]
+	prompt = false
+[merge "mergiraf"]
+	name = mergiraf
+	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P
