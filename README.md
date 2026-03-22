@@ -42,19 +42,29 @@ Config: `~/.config/ghostty/config`
 
 Primary shell. Plugins managed via [Fisher](https://github.com/jorgebucaran/fisher).
 
+**Tracked by yadm:** `config.fish`, `fish_plugins`, and custom `wt*`/`__wt_*` functions (worktrunk helpers).
+Plugin-managed files (tide, fisher, autopair, puffer, sponge, vesper-theme) are **not tracked** — they're restored by Fisher.
+
 ```shell
 brew install fish
+
 # Set as default shell
 echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
 chsh -s /opt/homebrew/bin/fish
 
-# Install Fisher + plugins from fish_plugins
+# Install Fisher
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+fisher install jorgebucaran/fisher
+
+# Restore all plugins from fish_plugins (tide, autopair, puffer, sponge, vesper-theme)
 fisher update
+
+# Configure tide prompt
+tide configure
 ```
 
-Config: `~/.config/fish/`
-Plugins: tide, autopair, puffer, sponge, vesper-theme (listed in `fish_plugins`)
+Config: `~/.config/fish/config.fish`
+Plugins (from `fish_plugins`): [tide](https://github.com/IlanCosman/tide), [autopair](https://github.com/jorgebucaran/autopair.fish), [puffer](https://github.com/nickeb96/puffer-fish), [sponge](https://github.com/meaningful-ooo/sponge), vesper-theme
 
 ---
 
