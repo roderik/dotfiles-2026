@@ -159,28 +159,12 @@ Update: `npx skills update`
 
 ### OpenClaw Skills
 
-Custom skills installed at `~/.agents/skills/`. These are symlinked into `~/.claude/skills/` per-project.
+Custom skills installed at `~/.agents/skills/`.
 
 | Skill | Source | Description |
 |-------|--------|-------------|
 | `dalp-dev` | `~/.agents/skills/dalp-dev.skill` | DALP project development conventions |
 | `dev-status` | `~/.agents/skills/dev-status.skill` | Development status reporting |
-| `ask` | `~/.git-ai/skills/ask` | Ask the AI who wrote the code questions |
-| `git-ai-search` | `~/.git-ai/skills/git-ai-search` | Search and restore AI conversation context from git history |
-| `prompt-analysis` | `~/.git-ai/skills/prompt-analysis` | Analyze AI prompting patterns and acceptance rates |
-| `cmux` | impeccable | cmux terminal automation |
-| `cmux-browser` | impeccable | Browser automation via cmux |
-| `cmux-markdown` | impeccable | Markdown viewer in cmux panes |
-| `cmux-debug-windows` | impeccable | cmux debug window management |
-| `frontend-design` | impeccable | Production-grade frontend interface design |
-| `polish` | impeccable | Final quality pass before shipping |
-| `audit` | impeccable | Comprehensive interface quality audit |
-| `typeset` | impeccable | Typography improvement |
-| `animate` | impeccable | Animation and micro-interaction enhancement |
-| `critique` | impeccable | UX design evaluation |
-| `find-skills` | impeccable | Skill discovery and installation |
-| `improve-claude-md` | impeccable | CLAUDE.md file improvement |
-
 ---
 
 ### Editor
