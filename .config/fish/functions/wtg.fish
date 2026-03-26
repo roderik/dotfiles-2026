@@ -1,4 +1,4 @@
-function wtg --description "Pick a PR and check it out as a worktree, optionally launch agent via ACP"
+function wtg --description "Pick a PR and check it out as a worktree"
   set -l repo_root (__wt_repo_root)
   or return
   test -z "$repo_root"; and return
@@ -21,16 +21,6 @@ function wtg --description "Pick a PR and check it out as a worktree, optionally
   and __wt_cmux_rename "PR #$pr: $pr_title"
   and __wt_cmux_setup
 
-  # Get the worktree path
-  set -l worktree_path (pwd)
-
-  # Ask if user wants to spawn an ACP agent
   echo ""
-  echo "PR #$pr checked out to: $worktree_path"
-  echo ""
-  echo "To spawn an ACP agent for this PR, run one of:"
-  echo "  acpx claude --cwd '$worktree_path' --label 'PR-$pr' 'work on this PR'"
-  echo "  acpx codex --cwd '$worktree_path' --label 'PR-$pr' '\$work on this PR'"
-  echo ""
-  echo "Then control from Telegram with /acp commands"
+  echo "PR #$pr checked out to: "(pwd)
 end

@@ -1,0 +1,10 @@
+theme "catppuccin-macchiato"
+simplified_ui false
+pane_frames true
+auto_layout true
+session_serialization true
+scrollback_editor "nvim"
+default_layout "default"
+on_force_close "quit"
+show_release_notes false
+show_startup_tips false

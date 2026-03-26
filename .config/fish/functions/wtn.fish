@@ -1,4 +1,4 @@
-function wtn --description "Create worktree from Linear ticket and launch Claude Code via ACP"
+function wtn --description "Create worktree from Linear ticket"
   set -l ticket $argv[1]
   if test -z "$ticket"
     echo "Usage: wtn <ticket-id>  (e.g. wtn PRD-6385)"
@@ -37,15 +37,10 @@ function wtn --description "Create worktree from Linear ticket and launch Claude
   # Get the worktree path (wt switch should have put us there)
   set -l worktree_path (pwd)
 
-  # Set cmux workspace title and layout
+  # Set cmux workspace title and layout, start Claude, then send /execute
   __wt_cmux_rename "$ticket: $title"
-  __wt_cmux_setup
+  __wt_cmux_setup --prompt "/execute $ticket"
 
-  # Launch Claude Code via ACP for remote control
   echo ""
-  echo "Launching Claude Code via ACP for $ticket..."
-  echo "You can control this session from Telegram with:"
-  echo "  /acp steer 'status' or /acp steer 'what are you working on?'"
-  echo ""
-  acpx claude --cwd "$worktree_path" --label "$ticket" "/execute $ticket — $title"
+  echo "$ticket checked out to: $worktree_path"
 end
