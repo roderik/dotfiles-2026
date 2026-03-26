@@ -82,6 +82,9 @@ if status is-interactive
     # ── zoxide ───────────────────────────────────────────────────────────
     zoxide init fish --cmd cd | source
 
+    # ── prompt ──────────────────────────────────────────────────────────
+    starship init fish | source
+
     # ── pager ────────────────────────────────────────────────────────────
     set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
     set -gx MANROFFOPT "-c"
