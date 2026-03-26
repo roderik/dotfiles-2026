@@ -38,8 +38,7 @@ function ztnx --description "Create worktree from Linear ticket — Codex (zelli
 
     set -l worktree_path (pwd)
 
-    __zt_zellij_rename "$ticket: $title"
-    __zt_zellij_setup --cli "codex --full-auto"
+    __zt_zellij_setup --name "$ticket: $title" --cli "codex --full-auto"
 
     echo ""
     echo "$ticket checked out to: $worktree_path"

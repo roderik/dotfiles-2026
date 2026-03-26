@@ -22,8 +22,7 @@ function ztg --description "Pick a PR and check it out as a worktree (zellij)"
     set -l pr_title (cd $repo_root; and gh pr view $pr --json title --jq .title 2>/dev/null)
 
     cd $repo_root; and git fetch origin main; and wt switch "pr:$pr"; and zic
-    and __zt_zellij_rename "PR #$pr: $pr_title"
-    and __zt_zellij_setup
+    and __zt_zellij_setup --name "PR #$pr: $pr_title"
 
     echo ""
     echo "PR #$pr checked out to: "(pwd)

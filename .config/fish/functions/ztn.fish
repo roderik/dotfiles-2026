@@ -38,8 +38,7 @@ function ztn --description "Create worktree from Linear ticket (zellij)"
 
     set -l worktree_path (pwd)
 
-    __zt_zellij_rename "$ticket: $title"
-    __zt_zellij_setup --prompt "/execute $ticket"
+    __zt_zellij_setup --name "$ticket: $title" --prompt "/execute $ticket"
 
     echo ""
     echo "$ticket checked out to: $worktree_path"

@@ -13,6 +13,5 @@ function ztl --description "List worktrees and cd to selection (zellij)"
     test -z "$target"; and return
 
     cd $target
-    and __zt_zellij_rename (git branch --show-current 2>/dev/null)
-    and __zt_zellij_setup
+    and __zt_zellij_setup --name (git branch --show-current 2>/dev/null)
 end
