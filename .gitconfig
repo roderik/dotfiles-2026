@@ -1,6 +1,6 @@
 [core]
 	pager = delta
-	attributesfile = /Users/roderik/.config/git/attributes
+	attributesfile = ~/.config/git/attributes
 [interactive]
 	diffFilter = delta --color-only
 [delta]
@@ -20,8 +20,8 @@
 [user]
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA0+bsCoH2OJejgy1f89x6ngW7/sqYWqM949diNIo449
 	email = roderik@settlemint.com
-[gpg "ssh"]
-	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[include]
+	path = ~/.config/git/config.local
 [difftool "difftastic"]
 	cmd = difft \"$LOCAL\" \"$REMOTE\"
 [difftool]
