@@ -1,2 +1,36 @@
+# ── theme ────────────────────────────────────────────────────────────
+theme = Catppuccin Mocha
 
+# ── font ─────────────────────────────────────────────────────────────
+font-family = Berkeley Mono
+font-size = 14
+font-feature = -liga
+font-thicken = true
+
+# ── window ───────────────────────────────────────────────────────────
+window-padding-x = 8
+window-padding-y = 4
+window-padding-balance = true
+window-decoration = auto
+macos-titlebar-style = tabs
+macos-option-as-alt = true
+confirm-close-surface = false
+
+# ── cursor ───────────────────────────────────────────────────────────
+cursor-style = bar
+cursor-style-blink = false
+adjust-cursor-thickness = 1
+
+# ── scrollback ───────────────────────────────────────────────────────
+scrollback-limit = 50000
+
+# ── clipboard ────────────────────────────────────────────────────────
+copy-on-select = clipboard
+clipboard-paste-protection = false
+
+# ── shell integration ────────────────────────────────────────────────
+shell-integration = fish
+shell-integration-features = cursor,sudo,title
+
+# ── keybinds ─────────────────────────────────────────────────────────
 keybind = shift+enter=text:\x1b\r
