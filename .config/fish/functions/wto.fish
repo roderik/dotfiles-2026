@@ -1,20 +1,22 @@
 function wto --description "Launch Claude Code orchestrator in the main DALP repo"
-  set -l main_repo ~/Development/dalp
-  if not test -d "$main_repo/.git"
-    echo "Error: main DALP repo not found at $main_repo"
-    return 1
-  end
+    # Find main repo across platforms
+    set -l main_repo
+    for dir in ~/Development/dalp ~/dev/dalp
+        if test -d "$dir/.git"
+            set main_repo $dir
+            break
+        end
+    end
 
-  command -q cmux; or begin
-    echo "Error: cmux is required for the orchestrator"
-    return 1
-  end
+    if test -z "$main_repo"
+        echo "Error: DALP repo not found in ~/Development/dalp or ~/dev/dalp"
+        return 1
+    end
 
-  # Rename and pin the current workspace
-  cmux workspace-action --action rename --title "Orchestrator" 2>/dev/null
-  cmux workspace-action --action pin 2>/dev/null
-  cmux workspace-action --action move-top 2>/dev/null
+    if test -n "$ZELLIJ"
+        zellij action rename-tab "Orchestrator" 2>/dev/null
+    end
 
-  cd $main_repo
-  echo "Orchestrator workspace ready at $main_repo"
+    cd $main_repo
+    echo "Orchestrator tab ready at $main_repo"
 end
