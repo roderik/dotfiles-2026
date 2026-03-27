@@ -34,7 +34,8 @@ function wtd --description "Delete a worktree via fzf picker (current worktree p
     end
 
     echo "Removing worktree: $branch ($target)"
-    wt -C $repo_root remove --yes --foreground --force $branch
+    # Use git directly — wt branch names can differ from git branch names
+    git -C $repo_root worktree remove --force "$target" 2>/dev/null
     git -C $repo_root remote prune origin 2>/dev/null
     git -C $repo_root branch -D $branch 2>/dev/null
 
