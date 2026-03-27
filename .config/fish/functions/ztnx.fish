@@ -33,19 +33,18 @@ function ztnx --description "Create worktree from Linear ticket — Codex (zelli
     or return
     test -z "$repo_root"; and return
 
-    cd $repo_root; and git fetch origin main; and wt switch --create --base origin/main $branch
+    cd $repo_root; and git fetch origin main
     or return 1
 
-    set -l worktree_path (pwd)
+    # Open tab at repo root, create worktree inside the new tab
+    # Codex needs a delay after launch before sending the /execute command
+    __zt_zellij_setup --name "$ticket: $title" --cli "codex --full-auto" --wt-cmd "wt switch --create --base origin/main $branch"
 
-    __zt_zellij_setup --name "$ticket: $title" --cli "codex --full-auto"
-
-    echo ""
-    echo "$ticket checked out to: $worktree_path"
-
-    # Send /execute command to Codex in the main pane
-    # After __zt_zellij_setup, focus is on main pane where Codex is running
+    # Send /execute command to Codex in the main pane after it starts
     sleep 3
     zellij action write-chars "/execute $ticket"
     zellij action write 10
+
+    echo ""
+    echo "$ticket tab opened for: $branch"
 end

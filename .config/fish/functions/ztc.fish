@@ -8,9 +8,12 @@ function ztc --description "Create a new worktree (zellij)"
     or return
     test -z "$repo_root"; and return
 
-    cd $repo_root; and git fetch origin main; and wt switch --create --base origin/main $argv
-    and __zt_zellij_setup --name $argv[1]
+    cd $repo_root; and git fetch origin main
+    or return 1
+
+    # Open tab at repo root, create worktree inside the new tab
+    __zt_zellij_setup --name $argv[1] --wt-cmd "wt switch --create --base origin/main $argv[1]"
 
     echo ""
-    echo "Worktree created: "(pwd)
+    echo "Worktree tab opened for: $argv[1]"
 end

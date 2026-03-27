@@ -12,6 +12,9 @@ function ztl --description "List worktrees and cd to selection (zellij)"
         fzf --height=40% --reverse --header "Select worktree" | awk '{print $1}')
     test -z "$target"; and return
 
-    cd $target
-    and __zt_zellij_setup --name (git branch --show-current 2>/dev/null)
+    set -l branch_name (git -C $target branch --show-current 2>/dev/null)
+
+    # Open tab at repo root, cd to the worktree inside the new tab
+    cd $repo_root
+    __zt_zellij_setup --name "$branch_name" --wt-cmd "cd $target"
 end

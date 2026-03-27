@@ -33,13 +33,12 @@ function ztn --description "Create worktree from Linear ticket (zellij)"
     or return
     test -z "$repo_root"; and return
 
-    cd $repo_root; and git fetch origin main; and wt switch --create --base origin/main $branch
+    cd $repo_root; and git fetch origin main
     or return 1
 
-    set -l worktree_path (pwd)
-
-    __zt_zellij_setup --name "$ticket: $title" --prompt "/execute $ticket"
+    # Open tab at repo root, create worktree inside the new tab
+    __zt_zellij_setup --name "$ticket: $title" --prompt "/execute $ticket" --wt-cmd "wt switch --create --base origin/main $branch"
 
     echo ""
-    echo "$ticket checked out to: $worktree_path"
+    echo "$ticket tab opened for: $branch"
 end
