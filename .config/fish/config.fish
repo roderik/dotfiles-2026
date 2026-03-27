@@ -55,6 +55,7 @@ if status is-interactive
     abbr -a claude 'claude --dangerously-skip-permissions'
     abbr -a c 'claude --dangerously-skip-permissions'
     abbr -a x codex
+    abbr -a wts '__wt_tab_setup --dir (pwd)'
 
     # ── cmux (only inside cmux sessions) ─────────────────────────────────
     if set -q CMUX_WORKSPACE_ID
