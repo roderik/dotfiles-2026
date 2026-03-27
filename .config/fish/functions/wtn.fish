@@ -95,8 +95,9 @@ function __wtn_existing
     set -l codex_flag $argv[3]
 
     set -l branch_name (git -C $target branch --show-current 2>/dev/null)
+    set -l short_name (string replace -r '^[^/]+/' '' -- $branch_name | string sub -l 20)
 
-    set -l flags --name "$branch_name" --dir "$target"
+    set -l flags --name "$short_name" --dir "$target"
     test -n "$codex_flag"; and set -a flags $codex_flag
 
     __wt_tab_setup $flags
@@ -115,7 +116,9 @@ function __wtn_branch
     set -l worktree_path (pwd)
     cd $original_dir
 
-    set -l flags --name "$branch" --dir "$worktree_path"
+    # Shorten: strip username prefix (roderik/prd-xxx-foo → prd-xxx-foo), truncate
+    set -l short_branch (string replace -r '^[^/]+/' '' -- $branch | string sub -l 20)
+    set -l flags --name "$short_branch" --dir "$worktree_path"
     test -n "$codex_flag"; and set -a flags $codex_flag
 
     __wt_tab_setup $flags
@@ -153,7 +156,7 @@ function __wtn_linear
     set -l worktree_path (pwd)
     cd $original_dir
 
-    set -l flags --name "$ticket: $title" --dir "$worktree_path" --prompt "/execute $ticket"
+    set -l flags --name "$ticket" --dir "$worktree_path" --prompt "/execute $ticket"
     test -n "$codex_flag"; and set -a flags $codex_flag
 
     __wt_tab_setup $flags
@@ -178,7 +181,7 @@ function __wtn_pr
     set -l worktree_path (pwd)
     cd $original_dir
 
-    set -l flags --name "PR #$pr: $pr_title" --dir "$worktree_path" --prompt "/shepherd"
+    set -l flags --name "#$pr" --dir "$worktree_path" --prompt "/shepherd"
     test -n "$codex_flag"; and set -a flags $codex_flag
 
     __wt_tab_setup $flags
