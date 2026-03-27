@@ -16,7 +16,7 @@ function wtd --description "Delete a worktree via fzf picker (current worktree p
             echo "$line"
         end
     end | fzf --height=40% --reverse --header "Delete which worktree?" \
-              --query "(current)" --select-1 | sed 's/ (current)$//' | awk '{print $1}')
+              --query "(current)" | sed 's/ (current)$//' | awk '{print $1}')
     test -z "$target"; and return
 
     set -l branch (git -C $repo_root worktree list | grep "^$target " | awk '{print $3}' | tr -d '[]')
