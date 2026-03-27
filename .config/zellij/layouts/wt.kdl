@@ -1,9 +1,11 @@
 layout {
     default_tab_template {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
+        pane split_direction="vertical" {
+            pane size=20 borderless=true {
+                plugin location="https://github.com/cfal/zellij-vertical-tabs/releases/download/v0.1.0/zellij-vertical-tabs.wasm"
+            }
+            children
         }
-        children
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
