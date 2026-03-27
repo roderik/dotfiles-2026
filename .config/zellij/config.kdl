@@ -8,3 +8,15 @@ default_layout "default"
 on_force_close "quit"
 show_release_notes false
 show_startup_tips false
+
+keybinds {
+    shared_except "locked" {
+        bind "Ctrl y" {
+            LaunchOrFocusPlugin "https://github.com/rvcas/room/releases/latest/download/room.wasm" {
+                floating true
+                ignore_case true
+                quick_jump true
+            }
+        }
+    }
+}
