@@ -18,6 +18,7 @@ if status is-interactive
     fish_add_path -g $HOME/.cargo/bin
     fish_add_path -g $HOME/.opencode/bin
     fish_add_path -g $HOME/.git-ai/bin
+    fish_add_path -g $HOME/.foundry/bin
 
     # ── PATH (platform-specific) ─────────────────────────────────────────
     switch (uname)
