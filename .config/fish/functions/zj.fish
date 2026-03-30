@@ -1,9 +1,12 @@
-function zj --description "Attach to the dalp zellij session, or create it"
+function zj --description "Start or attach to a zellij session"
     if test -n "$ZELLIJ"
-        echo "Already inside zellij"
+        echo "Already inside a zellij session"
         return 0
     end
 
-    # Attach if session exists, otherwise create
-    zellij attach dalp 2>/dev/null; or zellij --session dalp
+    if test -n "$argv[1]"
+        zellij attach --create $argv[1]
+    else
+        zellij attach --create
+    end
 end

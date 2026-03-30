@@ -9,7 +9,6 @@ export PATH="$HOME/.local/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
 export PATH="$HOME/.git-ai/bin:$PATH"
 export PATH="$HOME/.cubic/bin:$PATH"

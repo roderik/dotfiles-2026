@@ -36,11 +36,6 @@ if status is-interactive
         source $HOME/.local/state/dalp/exa-mcp.fish
     end
 
-    # ── worktrunk ────────────────────────────────────────────────────────
-    if command -q wt
-        command wt config shell init fish | source
-    end
-
     # ── abbreviations ────────────────────────────────────────────────────
     abbr -a ls eza
     abbr -a ll 'eza -l --git --icons'
@@ -55,7 +50,6 @@ if status is-interactive
     abbr -a claude 'claude --dangerously-skip-permissions'
     abbr -a c 'claude --dangerously-skip-permissions'
     abbr -a x codex
-    abbr -a wts '__wt_tab_setup --dir (pwd)'
 
     # ── cmux (only inside cmux sessions) ─────────────────────────────────
     if set -q CMUX_WORKSPACE_ID
